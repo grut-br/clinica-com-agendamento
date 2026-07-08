@@ -1,115 +1,42 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Sparkles } from "lucide-react";
-
-// Ícones oficiais que foram descontinuados no Lucide v1.x para evitar conflitos de marcas
-const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    width="24"
-    height="24"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
-
-const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    width="24"
-    height="24"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-  </svg>
-);
-
-const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    width="24"
-    height="24"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
+import { Phone, MapPin, Smile, MessageSquare } from "lucide-react";
+import { siteConfig } from "@/config/site";
+import { marketingNavigation } from "@/config/navigation";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const linksUteis = [
-    { label: "Serviços", href: "#servicos" },
-    { label: "Sobre Nós", href: "#sobre" },
-    { label: "Cases de Sucesso", href: "#cases" },
-    { label: "Contato", href: "#contato" },
-  ];
-
-  const contatos = [
-    { icon: Phone, label: "+55 (11) 99999-9999", href: "tel:+5511999999999" },
-    { icon: Mail, label: "contato@suaagencia.com.br", href: "mailto:contato@suaagencia.com.br" },
-    { icon: MapPin, label: "São Paulo, SP - Brasil", href: "#" },
-  ];
-
   return (
-    <footer className="w-full border-t border-white/10 bg-black text-zinc-400">
+    <footer className="w-full border-t border-slate-800 bg-primary text-slate-100">
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12 lg:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-16">
           
-          {/* Logo & Sobre */}
+          {/* Coluna 1: Brand & Descrição com alto contraste */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-105">
-                <Sparkles className="h-5 w-5" />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-transform group-hover:scale-105 shadow-inner">
+                <Smile className="h-5.5 w-5.5 text-secondary" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-white group-hover:text-violet-400 transition-colors">
-                Devio<span className="text-violet-500">.</span>
+              <span className="text-xl font-bold tracking-tight text-white transition-colors">
+                Med <span className="text-secondary">Odonto</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed max-w-xs text-zinc-500">
-              Criando soluções digitais sob medida para escalar o seu negócio e garantir a melhor experiência de usuário do mercado.
+            <p className="text-sm leading-relaxed max-w-xs text-white/80 font-light">
+              {siteConfig.description}
             </p>
-            <div className="flex gap-4 pt-2">
-              <Link href="#" className="hover:text-white transition-colors" aria-label="LinkedIn">
-                <LinkedinIcon className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="hover:text-white transition-colors" aria-label="Instagram">
-                <InstagramIcon className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="hover:text-white transition-colors" aria-label="GitHub">
-                <GithubIcon className="h-5 w-5" />
-              </Link>
-            </div>
           </div>
 
-          {/* Links Úteis */}
+          {/* Coluna 2: Navegação com alto contraste e micro-interação */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Navegação</h3>
-            <ul className="space-y-2 text-sm">
-              {linksUteis.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="hover:text-white transition-colors">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Navegação</h3>
+            <ul className="space-y-2.5 text-sm font-medium">
+              {marketingNavigation.map((link) => (
+                <li key={link.href}>
+                  <Link 
+                    href={link.href} 
+                    className="inline-block text-white/80 hover:text-secondary hover:translate-x-1 transition-all duration-300 transform"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -117,42 +44,51 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contato */}
+          {/* Coluna 3: Contatos Oficiais */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Contato</h3>
-            <ul className="space-y-3 text-sm">
-              {contatos.map((contato, idx) => {
-                const Icon = contato.icon;
-                return (
-                  <li key={idx} className="flex items-center gap-3">
-                    <Icon className="h-4 w-4 text-violet-500 shrink-0" />
-                    {contato.href !== "#" ? (
-                      <Link href={contato.href} className="hover:text-white transition-colors">
-                        {contato.label}
-                      </Link>
-                    ) : (
-                      <span>{contato.label}</span>
-                    )}
-                  </li>
-                );
-              })}
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Contato</h3>
+            <ul className="space-y-3 text-sm font-light">
+              <li className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                <span className="text-white/90 leading-normal">{siteConfig.address}</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="h-4.5 w-4.5 text-secondary shrink-0" />
+                <a 
+                  href={`tel:${siteConfig.phone.replace(/[^0-9]/g, "")}`} 
+                  className="text-white/90 hover:text-white hover:underline transition-colors"
+                >
+                  {siteConfig.phone}
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <MessageSquare className="h-4.5 w-4.5 text-secondary shrink-0" />
+                <a 
+                  href={`https://wa.me/${siteConfig.whatsapp}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-white/90 hover:text-white hover:underline transition-colors"
+                >
+                  WhatsApp: (98) 92003-3319
+                </a>
+              </li>
             </ul>
           </div>
 
         </div>
 
-        {/* Divisão inferior do Copyright */}
-        <div className="mt-12 border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>© {currentYear} Devio. Todos os direitos reservados.</p>
+        {/* Copyright & Créditos */}
+        <div className="mt-12 border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60 font-light">
+          <p>© {currentYear} Clínica Med Odonto. Todos os direitos reservados.</p>
           <div className="flex items-center gap-1">
             <span>Desenvolvido por</span>
             <Link
-              href="https://suaagencia.com.br"
+              href="https://devio.com.br"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-white hover:text-violet-400 transition-colors"
+              className="font-semibold text-white/80 hover:text-secondary transition-colors"
             >
-              [Nome da Agência]
+              Devio
             </Link>
           </div>
         </div>

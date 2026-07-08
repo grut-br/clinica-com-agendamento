@@ -46,6 +46,8 @@ NEXT_PUBLIC_SUPABASE_URL=sua-url-do-supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anon-do-supabase
 ```
 
+Para produção, configure um provedor SMTP (como Resend ou SendGrid) em Authentication > Emails > SMTP Settings para garantir a entregabilidade dos e-mails de recuperação.
+
 ### Servidor de Desenvolvimento
 Inicie o servidor localmente:
 ```bash

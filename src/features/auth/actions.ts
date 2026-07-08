@@ -1,36 +1,81 @@
 "use server";
 
-import { loginSchema, type LoginInput } from "./schemas";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { ActionState } from "@/lib/action-state";
+import { loginSchema } from "./schema";
 
-export async function loginAction(
-  data: LoginInput
+/**
+ * Server Action para autenticação de administradores da clínica.
+ */
+export async function signInAction(
+  prevState: ActionState,
+  formData: FormData
 ): Promise<ActionState> {
-  // Simular atraso de rede de 1 segundo
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
-  // Validação segura com o schema do Zod
-  const result = loginSchema.safeParse(data);
-
+  // 1. Validação com o esquema Zod
+  const result = loginSchema.safeParse({ email, password });
   if (!result.success) {
     const fieldErrors = result.error.flatten().fieldErrors;
     return {
       success: false,
-      message: "Falha na validação do formulário.",
+      message: "Preencha os campos de login corretamente.",
       errors: fieldErrors as Record<string, string[]>,
     };
   }
 
-  // Simular credenciais válidas para teste de sucesso
-  if (data.email === "admin@devio.com.br" && data.senha === "senha123") {
+  const { email: validatedEmail, password: validatedPassword } = result.data;
+  let loginSuccess = false;
+
+  try {
+    const supabase = await createClient();
+
+    // 2. Tenta autenticar o usuário com e-mail e senha no Supabase
+    const { error } = await supabase.auth.signInWithPassword({
+      email: validatedEmail,
+      password: validatedPassword,
+    });
+
+    if (error) {
+      console.error("[AUTH_SIGNIN_ERROR]:", error.message);
+      return {
+        success: false,
+        message: "Credenciais inválidas. Verifique seu e-mail e senha.",
+      };
+    }
+
+    loginSuccess = true;
+  } catch (error) {
+    console.error("[AUTH_SIGNIN_CRITICAL_ERROR]:", error);
     return {
-      success: true,
-      message: "Login efetuado com sucesso!",
+      success: false,
+      message: "Ocorreu um erro interno crítico ao tentar fazer login.",
     };
   }
 
+  // 3. Redirecionamento seguro fora do bloco try-catch para evitar captura de erro de redirect do Next.js
+  if (loginSuccess) {
+    redirect("/dashboard");
+  }
+
   return {
-    success: false,
-    message: "Credenciais inválidas (Dica: utilize admin@devio.com.br / senha123 para simular sucesso).",
+    success: true,
+    message: "Login efetuado com sucesso!",
   };
+}
+
+/**
+ * Server Action para deslogar da conta administrativa (Logout).
+ */
+export async function logoutAction(): Promise<void> {
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch (error) {
+    console.error("[AUTH_SIGNOUT_CRITICAL_ERROR]:", error);
+  }
+  
+  redirect("/login");
 }

@@ -1,15 +1,19 @@
 export interface NavItem {
-  title: string;
+  title?: string;
+  label?: string;
   href: string;
   disabled?: boolean;
 }
 
-export const marketingNav: NavItem[] = [
-  { title: "Início", href: "/" },
-  { title: "Serviços", href: "/#servicos" },
-  { title: "Sobre Nós", href: "/#sobre" },
-  { title: "Contato", href: "/#contato" },
+export const marketingNavigation: NavItem[] = [
+  { label: "Início", href: "/" },
+  { label: "Especialidades", href: "/especialidades" },
+  { label: "Exames", href: "/exames" },
+  { label: "Sobre a Clínica", href: "/#sobre" },
 ];
+
+// Alias para compatibilidade retrógrada com referências a marketingNav
+export const marketingNav: NavItem[] = marketingNavigation;
 
 export const dashboardNav: NavItem[] = [
   { title: "Dashboard", href: "/dashboard" },

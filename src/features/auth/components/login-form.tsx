@@ -1,156 +1,148 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, LogIn, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
-import { loginAction } from "../actions";
+import React, { useActionState, useState } from "react";
+import { signInAction } from "../actions";
+import { ActionState } from "@/lib/action-state";
+import { Mail, Lock, ShieldAlert, Smile, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+
+const initialState: ActionState = {
+  success: false,
+  message: "",
+};
 
 export function LoginForm() {
-  const [isPending, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(
+    signInAction,
+    initialState
+  );
+
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-    errors?: {
-      email?: string[];
-      senha?: string[];
-    };
-  } | null>(null);
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFeedback(null);
-
-    startTransition(async () => {
-      try {
-        const response = await loginAction({ email, senha });
-
-        if (response.success) {
-          setFeedback({
-            type: "success",
-            message: response.message,
-          });
-          // Resetar campos
-          setEmail("");
-          setSenha("");
-        } else {
-          setFeedback({
-            type: "error",
-            message: response.message,
-            errors: response.errors,
-          });
-        }
-      } catch {
-        setFeedback({
-          type: "error",
-          message: "Ocorreu um erro inesperado ao processar o login.",
-        });
-      }
-    });
+  const getFieldError = (fieldName: string) => {
+    return state.errors?.[fieldName]?.[0] || "";
   };
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur-md shadow-xl">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <LogIn className="h-5 w-5 text-violet-500" />
-          Área de Acesso
-        </h2>
-        <p className="text-xs text-zinc-500 mt-1">
-          Teste o formulário de login acoplado às Server Actions do módulo de Auth.
+    <div className="w-full max-w-md bg-card border border-border rounded-3xl shadow-xl p-8 sm:p-10 text-card-foreground">
+      
+      {/* Header do Login */}
+      <div className="flex flex-col items-center text-center mb-8">
+        <Link href="/" className="flex items-center gap-2 group mb-6">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+            <Smile className="h-6 w-6 text-secondary" />
+          </div>
+          <span className="text-xl font-bold tracking-tight text-foreground">
+            Med <span className="text-secondary">Odonto</span>
+          </span>
+        </Link>
+        <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+          Painel Administrativo
+        </h1>
+        <p className="text-sm text-muted-foreground font-light mt-1.5">
+          Acesse para gerenciar e triar os agendamentos da clínica.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email */}
-        <div className="space-y-2 flex flex-col">
-          <label htmlFor="email" className="text-sm font-medium text-zinc-300 flex items-center gap-1.5">
-            <Mail className="h-4 w-4 text-zinc-500" />
+      {/* Formulário */}
+      <form action={formAction} className="space-y-5">
+        
+        {/* Alerta de erro geral */}
+        {!state.success && state.message && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 text-red-700 text-sm">
+            <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5 text-red-650" />
+            <p className="leading-relaxed font-medium">{state.message}</p>
+          </div>
+        )}
+
+        {/* E-mail */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             E-mail
           </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="admin@devio.com.br"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-all focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 cursor-pointer"
-            disabled={isPending}
-          />
-          {feedback?.errors?.email && (
-            <span className="text-xs text-red-500 mt-1">
-              {feedback.errors.email[0]}
+          <div className="relative">
+            <Mail className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/70" />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              disabled={isPending}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu-email@clinica.com"
+              className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
+                getFieldError("email") ? "border-red-500 bg-red-50/10 focus:border-red-500" : "border-border bg-muted/50 focus:border-primary/50"
+              }`}
+            />
+          </div>
+          {getFieldError("email") && (
+            <span className="text-xs text-red-500 font-medium" role="alert">
+              {getFieldError("email")}
             </span>
           )}
         </div>
 
         {/* Senha */}
-        <div className="space-y-2 flex flex-col">
-          <label htmlFor="senha" className="text-sm font-medium text-zinc-300 flex items-center gap-1.5">
-            <Lock className="h-4 w-4 text-zinc-500" />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Senha
           </label>
-          <input
-            id="senha"
-            type="password"
-            placeholder="••••••"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-all focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 cursor-pointer"
-            disabled={isPending}
-          />
-          {feedback?.errors?.senha && (
-            <span className="text-xs text-red-500 mt-1">
-              {feedback.errors.senha[0]}
+          <div className="relative">
+            <Lock className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/70" />
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
+              disabled={isPending}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className={`w-full pl-10 pr-10 py-3 rounded-xl border text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
+                getFieldError("password") ? "border-red-500 bg-red-50/10 focus:border-red-500" : "border-border bg-muted/50 focus:border-primary/50"
+              }`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3.5 top-3.5 text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4.5 w-4.5" />
+              ) : (
+                <Eye className="h-4.5 w-4.5" />
+              )}
+            </button>
+          </div>
+          {getFieldError("password") && (
+            <span className="text-xs text-red-500 font-medium" role="alert">
+              {getFieldError("password")}
             </span>
           )}
         </div>
 
-        {/* Mensagens de Feedback */}
-        <AnimatePresence mode="wait">
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className={`rounded-lg p-4 text-sm flex items-start gap-2.5 ${
-                feedback.type === "success"
-                  ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400"
-                  : "bg-red-500/10 border border-red-500/25 text-red-400"
-              }`}
-            >
-              {feedback.type === "success" ? (
-                <CheckCircle className="h-5 w-5 shrink-0 mt-0.5" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
-              )}
-              <div>
-                <p className="font-semibold">
-                  {feedback.type === "success" ? "Acesso Autorizado" : "Falha no Acesso"}
-                </p>
-                <p className="mt-0.5 text-xs opacity-90">{feedback.message}</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Link Esqueceu a Senha */}
+        <div className="text-right">
+          <Link
+            href="/esqueci-senha"
+            className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:rounded"
+          >
+            Esqueceu a senha?
+          </Link>
+        </div>
 
-        {/* Botão de Submit */}
+        {/* Botão de Entrar */}
         <button
           type="submit"
           disabled={isPending}
-          className="w-full inline-flex items-center justify-center rounded-lg bg-violet-600 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+          className="w-full inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground py-3.5 px-4 text-sm font-semibold transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0 text-center mt-4 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Verificando...
-            </>
-          ) : (
-            "Entrar"
-          )}
+          {isPending ? "Efetuando acesso..." : "Entrar no Painel"}
         </button>
+
       </form>
     </div>
   );
