@@ -90,7 +90,7 @@ export function LocationSection() {
  </h2>
 
  {/* Subtítulo */}
- <p className="mt-6 text-base sm:text-lg text-zinc-550 leading-relaxed font-light">
+ <p className="mt-6 text-base sm:text-lg text-zinc-600 leading-relaxed font-light">
  Nossa estrutura completa está pronta para receber você e sua família no coração de Pirapemas-MA. Agende uma visita ou venha direto nos conhecer!
  </p>
 
@@ -104,7 +104,7 @@ export function LocationSection() {
  </div>
  <div>
  <h4 className="text-sm font-bold text-[#0B1A3A] uppercase tracking-wider">Endereço</h4>
- <p className="text-sm text-zinc-650 font-light mt-0.5">{siteConfig.address}</p>
+ <p className="text-sm text-zinc-600 font-light mt-0.5">{siteConfig.address}</p>
  </div>
  </li>
 
@@ -115,7 +115,7 @@ export function LocationSection() {
  </div>
  <div>
  <h4 className="text-sm font-bold text-[#0B1A3A] uppercase tracking-wider">Telefone & WhatsApp</h4>
- <div className="flex flex-col text-sm text-zinc-650 font-light mt-0.5">
+ <div className="flex flex-col text-sm text-zinc-600 font-light mt-0.5">
  <a href={`tel:${siteConfig.phone.replace(/[^0-9]/g,"")}`} className="hover:text-[#0B1A3A] transition-colors font-medium">
  {siteConfig.phone}
  </a>
@@ -137,7 +137,7 @@ export function LocationSection() {
  href="https://instagram.com/med.odonto1"
  target="_blank"
  rel="noopener noreferrer"
- className="text-sm text-zinc-650 hover:text-[#0B1A3A] transition-colors font-light mt-0.5 block"
+ className="text-sm text-zinc-600 hover:text-[#0B1A3A] transition-colors font-light mt-0.5 block"
  >
  @med.odonto1
  </a>

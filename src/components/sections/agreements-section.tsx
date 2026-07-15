@@ -24,7 +24,7 @@ export function AgreementsSection() {
  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1A3A]">
  Convênios & Planos de Saúde Atendidos
  </h2>
- <p className="mt-2.5 text-sm text-zinc-550 font-light leading-relaxed">
+ <p className="mt-2.5 text-sm text-zinc-600 font-light leading-relaxed">
  Aceitamos uma ampla gama de convênios médicos e odontológicos para garantir seu atendimento com comodidade.
  </p>
  </div>

@@ -90,7 +90,7 @@ export function Hero() {
  initial={{ opacity: 0}}
  animate={{ opacity: 1}}
  transition={{ duration: 0.8, delay: 0.6}}
- className="mt-12 pt-8 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-6 w-full text-slate-750"
+ className="mt-12 pt-8 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-6 w-full text-[#0B1A3A]"
  >
  <div className="flex items-center gap-2.5">
  <ShieldCheck className="h-5 w-5 text-[#D4AF37] shrink-0"/>

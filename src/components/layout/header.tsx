@@ -30,7 +30,7 @@ export function Header() {
  <Link
  key={item.href}
  href={item.href}
- className="relative text-sm font-semibold text-zinc-650 transition-colors hover:text-[#D4AF37] group py-2"
+ className="relative text-sm font-semibold text-zinc-600 transition-colors hover:text-[#D4AF37] group py-2"
  >
  {item.label}
  <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[#D4AF37] transition-all duration-300 group-hover:w-full"/>
@@ -67,7 +67,7 @@ export function Header() {
  initial={{ opacity: 0, height: 0}}
  animate={{ opacity: 1, height:"auto"}}
  exit={{ opacity: 0, height: 0}}
- className="border-t border-slate-150 bg-white md:hidden shadow-lg"
+ className="border-t border-slate-200 bg-white md:hidden shadow-lg"
  >
  <div className="space-y-3 px-6 py-6">
  {marketingNavigation.map((item) => (
@@ -75,7 +75,7 @@ export function Header() {
  key={item.href}
  onClick={() => setIsOpen(false)}
  href={item.href}
- className="block rounded-lg px-4 py-2.5 text-base font-semibold text-zinc-650 hover:bg-slate-50 hover:text-[#0B1A3A] transition-colors"
+ className="block rounded-lg px-4 py-2.5 text-base font-semibold text-zinc-600 hover:bg-slate-50 hover:text-[#0B1A3A] transition-colors"
  >
  {item.label}
  </Link>

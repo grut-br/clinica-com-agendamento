@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { specialtiesContent } from "@/lib/constants/specialties-content";
 import { SchedulingForm } from "@/features/appointments/components/scheduling-form";
+import { getActiveSpecialties } from "@/features/appointments/queries";
 import { 
   Calendar, 
   ChevronRight, 
@@ -13,6 +14,8 @@ import {
   Sparkles,
   Award
 } from "lucide-react";
+
+export const revalidate = 0;
 
 interface SpecialtyPageProps {
   params: Promise<{ slug: string }>;
@@ -48,11 +51,18 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
     notFound();
   }
 
+  // Busca as especialidades ativas cadastradas no banco de dados do Supabase
+  const specialties = await getActiveSpecialties();
+  const currentSpecialty = specialties.find(
+    (s) => s.slug.toLowerCase() === slug.toLowerCase()
+  );
+  const initialSpecialtyId = currentSpecialty ? currentSpecialty.id : (specialties[0]?.id || "");
+
   return (
-    <div className="flex-1 bg-white text-slate-850">
+    <div className="flex-1 bg-white text-slate-800">
       
-      {/* 1. Hero Section com fundo bg-primary e texto branco */}
-      <section className="relative w-full py-16 sm:py-20 bg-primary text-white overflow-hidden">
+      {/* 1. Hero Section com fundo bg-[#0B1A3A] e texto branco */}
+      <section className="relative w-full py-16 sm:py-20 bg-[#0B1A3A] text-white overflow-hidden">
         {/* Glows de background */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-10%] h-[300px] w-[300px] rounded-full bg-secondary/15 blur-[80px]" />
@@ -66,11 +76,11 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
             <ChevronRight className="h-3.5 w-3.5" />
             <Link href="/especialidades" className="hover:text-white transition-colors">Especialidades</Link>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-secondary">{content.title}</span>
+            <span className="text-[#D4AF37]">{content.title}</span>
           </div>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-secondary mb-5">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-[#D4AF37] mb-5">
               <Award className="h-4 w-4" />
               <span>Atendimento Premium</span>
             </div>
@@ -85,7 +95,7 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
       </section>
 
       {/* 2. Seção de Conteúdo com fundo bg-slate-50 e textos em text-slate-800 (Split Layout) */}
-      <section className="py-16 sm:py-20 bg-slate-50 text-slate-850">
+      <section className="py-16 sm:py-20 bg-slate-50 text-slate-800">
         <div className="container mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16 items-start">
             
@@ -95,7 +105,7 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
                 <Sparkles className="h-6 w-6 text-secondary shrink-0" />
                 {content.servicesTitle}
               </h2>
-              <p className="text-slate-650 font-light leading-relaxed">
+              <p className="text-slate-600 font-light leading-relaxed">
                 Nossos especialistas realizam uma ampla gama de atendimentos especializados com foco no seu bem-estar completo:
               </p>
               
@@ -103,7 +113,7 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
                 {content.services.map((service, index) => (
                   <li 
                     key={index} 
-                    className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-slate-150 shadow-[0_8px_30px_rgb(0,0,0,0.02)]"
+                    className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.02)]"
                   >
                     <div className="h-5 w-5 rounded-full bg-secondary/10 flex items-center justify-center shrink-0 mt-0.5 border border-secondary/20">
                       <Check className="h-3 w-3 text-secondary font-extrabold" />
@@ -116,7 +126,7 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
 
             {/* Lado Direito: Card do Médico de Destaque */}
             <div className="lg:col-span-5">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-150 shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col items-center text-center">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col items-center text-center">
                 
                 {/* Foto do Médico (Placeholder Circular) */}
                 <div className="h-24 w-24 rounded-full bg-primary/5 border-2 border-slate-200 flex items-center justify-center text-secondary mb-4 shadow-inner relative overflow-hidden">
@@ -134,7 +144,7 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
 
                 <div className="h-[1px] w-full bg-slate-200 my-4" />
 
-                <p className="text-sm text-zinc-550 font-light leading-relaxed">
+                <p className="text-sm text-zinc-600 font-light leading-relaxed">
                   {content.doctor.description}
                 </p>
                 
@@ -169,8 +179,8 @@ export default async function SpecialtyPage({ params }: SpecialtyPageProps) {
           {/* O componente SchedulingForm carrega os dados reais e interativos do Supabase */}
           <div className="bg-white border border-slate-200/80 rounded-3xl shadow-xl p-6 sm:p-8">
             <SchedulingForm 
-              specialtyName={content.title} 
-              specialtySlug={slug} 
+              specialties={specialties} 
+              initialSpecialtyId={initialSpecialtyId} 
             />
           </div>
 

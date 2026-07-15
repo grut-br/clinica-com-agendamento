@@ -88,10 +88,10 @@ export default async function ExamPage({ params }: ExamPageProps) {
     : encodeURIComponent(`Olá! Gostaria de tirar dúvidas sobre o preparo para realizar o exame de ${examData.name} no laboratório Ultralab.`);
 
   return (
-    <div className="flex-1 bg-white text-slate-850">
+    <div className="flex-1 bg-white text-slate-800">
       
-      {/* 1. Hero Section com fundo bg-primary e texto branco */}
-      <section className="relative w-full py-16 sm:py-20 bg-primary text-white overflow-hidden">
+      {/* 1. Hero Section com fundo bg-[#0B1A3A] e texto branco */}
+      <section className="relative w-full py-16 sm:py-20 bg-[#0B1A3A] text-white overflow-hidden">
         {/* Glows de background */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-10%] h-[300px] w-[300px] rounded-full bg-secondary/15 blur-[80px]" />
@@ -105,12 +105,12 @@ export default async function ExamPage({ params }: ExamPageProps) {
             <ChevronRight className="h-3.5 w-3.5" />
             <Link href="/exames" className="hover:text-white transition-colors">Exames</Link>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-secondary">{content.title}</span>
+            <span className="text-[#D4AF37]">{content.title}</span>
           </div>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-secondary mb-5">
-              <Clock className="h-4 w-4 text-secondary" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-1.5 text-xs sm:text-sm font-semibold text-[#D4AF37] mb-5">
+              <Clock className="h-4 w-4 text-[#D4AF37]" />
               <span>Resultados: {content.resultsTime}</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white">
@@ -124,19 +124,19 @@ export default async function ExamPage({ params }: ExamPageProps) {
       </section>
 
       {/* 2. Seção de Conteúdo com fundo bg-slate-50 e textos em text-slate-800 (Split Layout) */}
-      <section className="py-16 sm:py-20 bg-slate-50 text-slate-850">
+      <section className="py-16 sm:py-20 bg-slate-50 text-slate-800">
         <div className="container mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16 items-start">
             
             {/* Esquerda: Instruções de Preparo */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-150 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
                 <h2 className="text-2xl font-extrabold text-primary flex items-center gap-2 mb-6">
                   <Sparkles className="h-6 w-6 text-secondary shrink-0" />
                   Instruções de Preparo Obrigatórias
                 </h2>
                 
-                <p className="text-slate-650 font-light leading-relaxed mb-6">
+                <p className="text-slate-600 font-light leading-relaxed mb-6">
                   Para garantir a precisão do laudo e a confiabilidade das suas análises clínicas, siga atentamente cada uma das orientações listadas abaixo antes da realização do procedimento:
                 </p>
 
@@ -153,7 +153,7 @@ export default async function ExamPage({ params }: ExamPageProps) {
 
                 <div className="mt-8 p-4.5 rounded-2xl bg-primary/5 border border-primary/10 flex items-start gap-3">
                   <Info className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
-                  <p className="text-xs text-zinc-505 font-medium leading-relaxed">
+                  <p className="text-xs text-zinc-600 font-medium leading-relaxed">
                     Caso possua dúvidas adicionais ou faça uso de medicamentos anticoagulantes, entre em contato direto com a nossa recepção laboratorial antes de comparecer à clínica.
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export default async function ExamPage({ params }: ExamPageProps) {
 
             {/* Direita: Card de Valor do Exame & CTA */}
             <div className="lg:col-span-5">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-150 shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col items-center text-center">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col items-center text-center">
                 
                 {/* Círculo do Preço */}
                 <div className="h-16 w-16 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center text-secondary mb-4 shadow-inner">
@@ -183,7 +183,7 @@ export default async function ExamPage({ params }: ExamPageProps) {
 
                 <div className="h-[1px] w-full bg-slate-200 my-6" />
 
-                <p className="text-sm text-zinc-550 font-light leading-relaxed mb-6">
+                <p className="text-sm text-zinc-600 font-light leading-relaxed mb-6">
                   {examData.requires_scheduling
                     ? "Este exame requer pré-agendamento e alocação de horário específico no laboratório."
                     : "Este exame é realizado por ordem de chegada no laboratório. Não esqueça do preparo necessário."
