@@ -64,7 +64,7 @@ export function NewPasswordForm() {
     // Validação com Zod
     const validation = passwordSchema.safeParse({ password, confirmPassword });
     if (!validation.success) {
-      setError(validation.error.errors[0].message);
+      setError(validation.error.issues[0].message);
       return;
     }
 

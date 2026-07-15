@@ -59,7 +59,37 @@ export async function getRecentAppointments(): Promise<AppointmentWithRelations[
       return [];
     }
 
-    return (data as unknown as AppointmentWithRelations[]) || [];
+    const formattedData = (data || []).map((item: any) => {
+      const patientObj = Array.isArray(item.patient) ? item.patient[0] : item.patient;
+      const specialtyObj = Array.isArray(item.specialty) ? item.specialty[0] : item.specialty;
+      const slotObj = Array.isArray(item.slot) ? item.slot[0] : item.slot;
+      const profObj = Array.isArray(item.professional) ? item.professional[0] : item.professional;
+
+      return {
+        id: item.id,
+        status: item.status,
+        notes: item.notes,
+        created_at: item.created_at,
+        patient: patientObj ? {
+          name: patientObj.name || "",
+          phone: patientObj.phone || "",
+          birth_date: patientObj.birth_date || null
+        } : { name: "", phone: "", birth_date: null },
+        specialty: specialtyObj ? {
+          name: specialtyObj.name || ""
+        } : { name: "" },
+        slot: slotObj ? {
+          date: slotObj.date || "",
+          start_time: slotObj.start_time || "",
+          end_time: slotObj.end_time || ""
+        } : null,
+        professional: profObj ? {
+          name: profObj.name || ""
+        } : null
+      };
+    });
+
+    return formattedData as AppointmentWithRelations[];
   } catch (error) {
     console.error("[GET_RECENT_APPOINTMENTS_CRITICAL]:", error);
     return [];
@@ -169,9 +199,13 @@ export async function fetchAvailableSlots(
 
     const occupiedTimes = new Set<string>();
     if (appointmentsData) {
-      appointmentsData.forEach((app) => {
-        if (app.appointment_slots?.start_time) {
-          const time = app.appointment_slots.start_time.substring(0, 5);
+      appointmentsData.forEach((app: any) => {
+        const slotObj = Array.isArray(app.appointment_slots) 
+          ? app.appointment_slots[0] 
+          : app.appointment_slots;
+
+        if (slotObj?.start_time) {
+          const time = slotObj.start_time.substring(0, 5);
           occupiedTimes.add(time);
         }
       });
@@ -272,6 +306,25 @@ export async function getAllProfessionals() {
   try {
     const supabase = await createClient();
 
+    // Mapeador comum para formatar o objeto do profissional resolvendo o array de especialidades
+    const formatProfessional = (p: any) => {
+      const specialtyObj = Array.isArray(p.specialty) ? p.specialty[0] : p.specialty;
+      return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        registration_number: p.registration_number !== undefined ? p.registration_number : null,
+        bio: p.bio,
+        is_active: p.is_active,
+        specialty_id: p.specialty_id,
+        specialty: specialtyObj ? {
+          id: specialtyObj.id,
+          name: specialtyObj.name,
+          category: specialtyObj.category || ""
+        } : null
+      };
+    };
+
     const { data, error } = await supabase
       .from("professionals")
       .select(`
@@ -317,18 +370,14 @@ export async function getAllProfessionals() {
           return [];
         }
 
-        // Mapeia os dados injetando null na propriedade inexistente
-        return (fallbackData || []).map((p) => ({
-          ...p,
-          registration_number: null,
-        }));
+        return (fallbackData || []).map((p) => formatProfessional(p));
       }
 
       console.error("[GET_ALL_PROFESSIONALS_QUERY_ERROR]:", error);
       return [];
     }
 
-    return data || [];
+    return (data || []).map((p) => formatProfessional(p));
   } catch (error) {
     console.error("[GET_ALL_PROFESSIONALS_CRITICAL_ERROR]:", error);
     return [];
@@ -372,8 +421,36 @@ export async function getDoctorAppointments(professionalId: string) {
       return [];
     }
 
-    // Ordena os agendamentos pela data e hora de início em memória para segurança
-    const sortedData = (data || []).sort((a, b) => {
+    // Mapeia os relacionamentos que vêm do Supabase como array de tamanho 1 para objeto simples
+    const formattedData = (data || []).map((item: any) => {
+      const patientObj = Array.isArray(item.patient) ? item.patient[0] : item.patient;
+      const specialtyObj = Array.isArray(item.specialty) ? item.specialty[0] : item.specialty;
+      const slotObj = Array.isArray(item.slot) ? item.slot[0] : item.slot;
+
+      return {
+        id: item.id,
+        status: item.status,
+        notes: item.notes,
+        clinical_notes: item.clinical_notes,
+        created_at: item.created_at,
+        patient: patientObj ? {
+          name: patientObj.name || "",
+          phone: patientObj.phone || "",
+          birth_date: patientObj.birth_date || null
+        } : { name: "", phone: "", birth_date: null },
+        specialty: specialtyObj ? {
+          name: specialtyObj.name || ""
+        } : { name: "" },
+        slot: slotObj ? {
+          date: slotObj.date || "",
+          start_time: slotObj.start_time || "",
+          end_time: slotObj.end_time || ""
+        } : null
+      };
+    });
+
+    // Ordena os agendamentos pela data e hora de início
+    const sortedData = formattedData.sort((a, b) => {
       const dateA = a.slot ? `${a.slot.date}T${a.slot.start_time}` : "";
       const dateB = b.slot ? `${b.slot.date}T${b.slot.start_time}` : "";
       return dateA.localeCompare(dateB);
@@ -442,8 +519,49 @@ export async function getAvailableSlots(specialtyId?: string) {
       return true;
     });
 
+    // Mapear relacionamentos do Supabase para o formato esperado pelo SlotItem
+    const formattedSlots = filteredSlots.map((slot: any) => {
+      const profObj = Array.isArray(slot.professional) ? slot.professional[0] : slot.professional;
+      
+      let blockObj = undefined;
+      if (slot.availability_blocks) {
+        const rawBlock = Array.isArray(slot.availability_blocks) 
+          ? slot.availability_blocks[0] 
+          : slot.availability_blocks;
+        
+        if (rawBlock) {
+          const specialtyObj = Array.isArray(rawBlock.specialty)
+            ? rawBlock.specialty[0]
+            : rawBlock.specialty;
+
+          blockObj = {
+            id: rawBlock.id,
+            specialty_id: rawBlock.specialty_id,
+            specialty: specialtyObj ? {
+              id: specialtyObj.id,
+              name: specialtyObj.name
+            } : undefined
+          };
+        }
+      }
+
+      return {
+        id: slot.id,
+        date: slot.date,
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        status: slot.status,
+        professional_id: slot.professional_id,
+        professional: profObj ? {
+          id: profObj.id,
+          name: profObj.name
+        } : null,
+        availability_blocks: blockObj
+      };
+    });
+
     // Ordenar em ordem cronológica
-    return filteredSlots.sort((a, b) => {
+    return formattedSlots.sort((a, b) => {
       const dtA = `${a.date}T${a.start_time}`;
       const dtB = `${b.date}T${b.start_time}`;
       return dtA.localeCompare(dtB);
@@ -517,7 +635,21 @@ export async function getAllProfiles() {
       return [];
     }
 
-    return data || [];
+    const formattedData = (data || []).map((item: any) => {
+      const profObj = Array.isArray(item.professional) ? item.professional[0] : item.professional;
+      return {
+        id: item.id,
+        email: item.email,
+        role: item.role,
+        professional_id: item.professional_id,
+        professional: profObj ? {
+          id: profObj.id,
+          name: profObj.name
+        } : null
+      };
+    });
+
+    return formattedData;
   } catch (error) {
     console.error("[GET_ALL_PROFILES_CRITICAL_ERROR]:", error);
     return [];

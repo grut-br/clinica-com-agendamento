@@ -265,7 +265,7 @@ export async function createAppointmentAction(
  */
 export async function updateAppointmentStatus(
   appointmentId: string,
-  newStatus: "confirmed" | "cancelled" | "completed"
+  newStatus: "pending" | "confirmed" | "cancelled" | "completed"
 ): Promise<void> {
   try {
     const supabase = await createClient();
@@ -491,7 +491,7 @@ export async function generateScheduleSlotsAction(
  */
 export async function updateAppointmentStatusAction(
   appointmentId: string,
-  status: "pending" | "confirmed" | "cancelled"
+  status: "pending" | "confirmed" | "cancelled" | "completed"
 ): Promise<void> {
   return updateAppointmentStatus(appointmentId, status);
 }

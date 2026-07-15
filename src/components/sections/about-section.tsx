@@ -38,27 +38,27 @@ const differentials = [
 
 // Variantes do Framer Motion para animação em cascata (Stagger) de alta performance
 const containerVariants = {
- hidden: { opacity: 0},
- show: {
- opacity: 1,
- transition: {
- staggerChildren: 0.12,
-},
-},
-};
+  hidden: { opacity: 0},
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+} as const;
 
 const cardVariants = {
- hidden: { opacity: 0, y: 20},
- show: { 
- opacity: 1, 
- y: 0,
- transition: {
- type:"spring",
- stiffness: 100,
- damping: 16
-}
-},
-};
+  hidden: { opacity: 0, y: 20},
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 100,
+      damping: 16
+    }
+  },
+} as const;
 
 export function AboutSection() {
  return (
