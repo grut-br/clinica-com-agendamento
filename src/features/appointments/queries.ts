@@ -23,6 +23,17 @@ export interface AppointmentWithRelations {
   } | null;
 }
 
+interface RawRecentAppointment {
+  id: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  notes: string | null;
+  created_at: string;
+  patient: { name: string; phone: string; birth_date: string | null } | { name: string; phone: string; birth_date: string | null }[] | null;
+  specialty: { name: string } | { name: string }[] | null;
+  slot: { date: string; start_time: string; end_time: string } | { date: string; start_time: string; end_time: string }[] | null;
+  professional: { name: string } | { name: string }[] | null;
+}
+
 export async function getRecentAppointments(): Promise<AppointmentWithRelations[]> {
   try {
     const supabase = await createClient();
@@ -59,7 +70,7 @@ export async function getRecentAppointments(): Promise<AppointmentWithRelations[
       return [];
     }
 
-    const formattedData = (data || []).map((item: any) => {
+    const formattedData = (data || []).map((item: RawRecentAppointment) => {
       const patientObj = Array.isArray(item.patient) ? item.patient[0] : item.patient;
       const specialtyObj = Array.isArray(item.specialty) ? item.specialty[0] : item.specialty;
       const slotObj = Array.isArray(item.slot) ? item.slot[0] : item.slot;
@@ -197,9 +208,14 @@ export async function fetchAvailableSlots(
       .eq("appointment_slots.date", date)
       .eq("specialty_id", specialtyId);
 
+    interface RawAppointmentSlot {
+      id: string;
+      appointment_slots: { start_time: string; date: string } | { start_time: string; date: string }[] | null;
+    }
+
     const occupiedTimes = new Set<string>();
     if (appointmentsData) {
-      appointmentsData.forEach((app: any) => {
+      appointmentsData.forEach((app: RawAppointmentSlot) => {
         const slotObj = Array.isArray(app.appointment_slots) 
           ? app.appointment_slots[0] 
           : app.appointment_slots;
@@ -299,6 +315,17 @@ export async function getAllExams() {
   }
 }
 
+interface RawProfessional {
+  id: string;
+  name: string;
+  slug: string;
+  registration_number?: string | null;
+  bio: string | null;
+  is_active: boolean;
+  specialty_id: string;
+  specialty: { id: string; name: string; category: string } | { id: string; name: string; category: string }[] | null;
+}
+
 /**
  * Consulta todos os profissionais cadastrados e realiza join com a especialidade vinculada.
  */
@@ -307,7 +334,7 @@ export async function getAllProfessionals() {
     const supabase = await createClient();
 
     // Mapeador comum para formatar o objeto do profissional resolvendo o array de especialidades
-    const formatProfessional = (p: any) => {
+    const formatProfessional = (p: RawProfessional) => {
       const specialtyObj = Array.isArray(p.specialty) ? p.specialty[0] : p.specialty;
       return {
         id: p.id,
@@ -316,7 +343,7 @@ export async function getAllProfessionals() {
         registration_number: p.registration_number !== undefined ? p.registration_number : null,
         bio: p.bio,
         is_active: p.is_active,
-        specialty_id: p.specialty_id,
+        specialty_id: p.specialty_id || "",
         specialty: specialtyObj ? {
           id: specialtyObj.id,
           name: specialtyObj.name,
@@ -387,6 +414,17 @@ export async function getAllProfessionals() {
 /**
  * Consulta agendamentos confirmados vinculados ao ID de um profissional de saúde.
  */
+interface RawDoctorAppointment {
+  id: string;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  notes: string | null;
+  clinical_notes: string | null;
+  created_at: string;
+  patient: { name: string; phone: string; birth_date: string | null } | { name: string; phone: string; birth_date: string | null }[] | null;
+  specialty: { name: string } | { name: string }[] | null;
+  slot: { date: string; start_time: string; end_time: string } | { date: string; start_time: string; end_time: string }[] | null;
+}
+
 export async function getDoctorAppointments(professionalId: string) {
   try {
     const supabase = await createClient();
@@ -422,7 +460,7 @@ export async function getDoctorAppointments(professionalId: string) {
     }
 
     // Mapeia os relacionamentos que vêm do Supabase como array de tamanho 1 para objeto simples
-    const formattedData = (data || []).map((item: any) => {
+    const formattedData = (data || []).map((item: RawDoctorAppointment) => {
       const patientObj = Array.isArray(item.patient) ? item.patient[0] : item.patient;
       const specialtyObj = Array.isArray(item.specialty) ? item.specialty[0] : item.specialty;
       const slotObj = Array.isArray(item.slot) ? item.slot[0] : item.slot;
@@ -461,6 +499,25 @@ export async function getDoctorAppointments(professionalId: string) {
     console.error("[GET_DOCTOR_APPOINTMENTS_CRITICAL_ERROR]:", error);
     return [];
   }
+}
+
+interface RawAvailableSlot {
+  id: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  status: string;
+  professional_id: string | null;
+  professional: { id: string; name: string } | { id: string; name: string }[] | null;
+  availability_blocks: {
+    id: string;
+    specialty_id: string;
+    specialty: { id: string; name: string } | { id: string; name: string }[] | null;
+  } | {
+    id: string;
+    specialty_id: string;
+    specialty: { id: string; name: string } | { id: string; name: string }[] | null;
+  }[] | null;
 }
 
 /**
@@ -520,7 +577,7 @@ export async function getAvailableSlots(specialtyId?: string) {
     });
 
     // Mapear relacionamentos do Supabase para o formato esperado pelo SlotItem
-    const formattedSlots = filteredSlots.map((slot: any) => {
+    const formattedSlots = filteredSlots.map((slot: RawAvailableSlot) => {
       const profObj = Array.isArray(slot.professional) ? slot.professional[0] : slot.professional;
       
       let blockObj = undefined;
@@ -609,6 +666,22 @@ export async function getUserProfile() {
   }
 }
 
+interface RawProfileInput {
+  id: string;
+  email: string;
+  role: string;
+  professional_id: string | null;
+  professional: { id: string; name: string } | { id: string; name: string }[] | null;
+}
+
+interface RawProfile {
+  id: string;
+  email: string;
+  role: "admin" | "pending" | "doctor" | "receptionist";
+  professional_id: string | null;
+  professional: { id: string; name: string } | null;
+}
+
 /**
  * Consulta todos os perfis de usuários cadastrados no sistema (Visualização do Admin).
  */
@@ -635,12 +708,12 @@ export async function getAllProfiles() {
       return [];
     }
 
-    const formattedData = (data || []).map((item: any) => {
+    const formattedData = (data || []).map((item: RawProfileInput): RawProfile => {
       const profObj = Array.isArray(item.professional) ? item.professional[0] : item.professional;
       return {
         id: item.id,
         email: item.email,
-        role: item.role,
+        role: item.role as "admin" | "pending" | "doctor" | "receptionist",
         professional_id: item.professional_id,
         professional: profObj ? {
           id: profObj.id,
