@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Devio Master Boilerplate | Fundação de Alto Padrão",

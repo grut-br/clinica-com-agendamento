@@ -3,7 +3,7 @@
 import React, { useActionState, useState, useMemo } from "react";
 import { generateScheduleSlotsAction } from "../actions";
 import { ActionState } from "@/lib/action-state";
-import { Calendar, Clock, Sparkles, AlertCircle, CheckCircle2, Stethoscope } from "lucide-react";
+import { Calendar, Clock, Sparkles, AlertCircle, CheckCircle2, Stethoscope, Trash2, PlusCircle } from "lucide-react";
 
 interface SpecialtyItem {
   id: string;
@@ -54,8 +54,7 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
   }, [specialties, professionals]);
 
   const [professionalId, setProfessionalId] = useState(initialProfessionalId);
-  const [startTime, setStartTime] = useState("08:00");
-  const [endTime, setEndTime] = useState("12:00");
+  const [intervals, setIntervals] = useState([{ id: 1, startTime: "08:00", endTime: "12:00" }]);
   const [intervalMinutes, setIntervalMinutes] = useState("30");
 
   // Encontra o ID da especialidade com base no slug selecionado
@@ -130,10 +129,10 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
               disabled={isPending}
               value={specialtySlug}
               onChange={(e) => handleSpecialtyChange(e.target.value)}
-              className="w-full rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer"
+              className="w-full rounded-xl border border-border bg-popover text-popover-foreground px-4 py-3 text-sm outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer appearance-none shadow-sm"
             >
               {specialties.map((spec) => (
-                <option key={spec.id} value={spec.slug}>
+                <option key={spec.id} value={spec.slug} className="bg-popover text-popover-foreground hover:bg-accent hover:text-accent-foreground">
                   {spec.name}
                 </option>
               ))}
@@ -152,14 +151,14 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
               disabled={isPending || !specialtySlug || filteredProfessionals.length === 0}
               value={professionalId}
               onChange={(e) => setProfessionalId(e.target.value)}
-              className="w-full rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-xl border border-border bg-popover text-popover-foreground px-4 py-3 text-sm outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer appearance-none shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               required
             >
               {filteredProfessionals.length === 0 ? (
-                <option value="">Nenhum médico nesta área...</option>
+                <option value="" className="bg-popover text-popover-foreground">Nenhum médico nesta área...</option>
               ) : (
                 filteredProfessionals.map((prof) => (
-                  <option key={prof.id} value={prof.id}>
+                  <option key={prof.id} value={prof.id} className="bg-popover text-popover-foreground hover:bg-accent hover:text-accent-foreground">
                     {prof.name}
                   </option>
                 ))
@@ -190,49 +189,6 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
             />
           </div>
 
-          {/* Hora Início */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="startTime" className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-              Hora de Início
-            </label>
-            <div className="relative">
-              <Clock className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-slate-400 dark:text-zinc-500" />
-              <input
-                id="startTime"
-                name="startTime"
-                type="time"
-                required
-                disabled={isPending}
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
-              />
-            </div>
-          </div>
-
-          {/* Hora Fim */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="endTime" className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-              Hora de Término
-            </label>
-            <div className="relative">
-              <Clock className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-slate-400 dark:text-zinc-500" />
-              <input
-                id="endTime"
-                name="endTime"
-                type="time"
-                required
-                disabled={isPending}
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
-              />
-            </div>
-          </div>
-
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {/* Duração/Intervalo */}
           <div className="flex flex-col gap-1.5 sm:col-span-1">
             <label htmlFor="intervalMinutes" className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
@@ -244,13 +200,91 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
               disabled={isPending}
               value={intervalMinutes}
               onChange={(e) => setIntervalMinutes(e.target.value)}
-              className="w-full rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer"
+              className="w-full rounded-xl border border-border bg-popover text-popover-foreground px-4 py-3 text-sm outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer appearance-none shadow-sm"
             >
-              <option value="15">15 minutos</option>
-              <option value="30">30 minutos</option>
-              <option value="60">60 minutos</option>
+              <option value="15" className="bg-popover text-popover-foreground hover:bg-accent hover:text-accent-foreground">15 minutos</option>
+              <option value="30" className="bg-popover text-popover-foreground hover:bg-accent hover:text-accent-foreground">30 minutos</option>
+              <option value="60" className="bg-popover text-popover-foreground hover:bg-accent hover:text-accent-foreground">60 minutos</option>
             </select>
           </div>
+        </div>
+
+        <div className="space-y-4">
+          <label className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+            Horários de Atendimento (Turnos)
+          </label>
+          
+          {intervals.map((interval, index) => (
+            <div key={interval.id} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-end bg-muted/10 p-4 rounded-xl border border-border">
+              {/* Hora Início */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                  Hora de Início
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400 dark:text-zinc-500" />
+                  <input
+                    name="startTime"
+                    type="time"
+                    required
+                    disabled={isPending}
+                    value={interval.startTime}
+                    onChange={(e) => {
+                      const newIntervals = [...intervals];
+                      newIntervals[index].startTime = e.target.value;
+                      setIntervals(newIntervals);
+                    }}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-transparent text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
+                  />
+                </div>
+              </div>
+
+              {/* Hora Fim */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                  Hora de Término
+                </label>
+                <div className="relative">
+                  <Clock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400 dark:text-zinc-500" />
+                  <input
+                    name="endTime"
+                    type="time"
+                    required
+                    disabled={isPending}
+                    value={interval.endTime}
+                    onChange={(e) => {
+                      const newIntervals = [...intervals];
+                      newIntervals[index].endTime = e.target.value;
+                      setIntervals(newIntervals);
+                    }}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-transparent text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
+                  />
+                </div>
+              </div>
+
+              {/* Botão Remover */}
+              {intervals.length > 1 && (
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => setIntervals(intervals.filter(i => i.id !== interval.id))}
+                  className="h-[42px] px-3 rounded-xl border border-red-200/50 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors flex items-center justify-center disabled:opacity-50 cursor-pointer"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => setIntervals([...intervals, { id: Date.now(), startTime: "14:00", endTime: "18:00" }])}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-transparent hover:bg-muted py-2.5 px-4 text-sm font-medium text-foreground transition-all duration-300 cursor-pointer disabled:opacity-50"
+          >
+            <PlusCircle className="h-4 w-4 text-muted-foreground" />
+            Adicionar outro turno
+          </button>
         </div>
 
         <button

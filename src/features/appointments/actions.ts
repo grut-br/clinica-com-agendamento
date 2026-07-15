@@ -297,14 +297,14 @@ export async function generateScheduleSlotsAction(
   const specialtySlug = formData.get("specialtySlug") as string;
   const professionalId = formData.get("professionalId") as string;
   const date = formData.get("date") as string;
-  const startTime = formData.get("startTime") as string;
-  const endTime = formData.get("endTime") as string;
+  const startTimes = formData.getAll("startTime") as string[];
+  const endTimes = formData.getAll("endTime") as string[];
   const intervalMinutesStr = formData.get("intervalMinutes") as string;
 
   const intervalMinutes = parseInt(intervalMinutesStr, 10) || 30;
 
   // 1. Validações básicas de entrada
-  if (!specialtySlug || !date || !startTime || !endTime || !professionalId) {
+  if (!specialtySlug || !date || startTimes.length === 0 || endTimes.length === 0 || !professionalId) {
     return {
       success: false,
       message: "Preencha todos os campos obrigatórios para poder gerar horários.",
@@ -362,8 +362,8 @@ export async function generateScheduleSlotsAction(
           professional_id: professionalId,
           type: "occasional",
           date: date,
-          start_time: `${startTime}:00`,
-          end_time: `${endTime}:00`,
+          start_time: `${startTimes[0]}:00`,
+          end_time: `${endTimes[endTimes.length - 1]}:00`,
           slot_duration: intervalMinutes,
           active: true,
         })
@@ -382,34 +382,41 @@ export async function generateScheduleSlotsAction(
 
     // 4. Cálculo matemático da grade de horários
     const slotsToInsert = [];
-    const [startHour, startMin] = startTime.split(":").map(Number);
-    const [endHour, endMin] = endTime.split(":").map(Number);
 
-    let currentMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
+    for (let i = 0; i < startTimes.length; i++) {
+      const startTime = startTimes[i];
+      const endTime = endTimes[i];
+      if (!startTime || !endTime) continue;
 
-    while (currentMinutes + intervalMinutes <= endMinutes) {
-      const slotStartHour = Math.floor(currentMinutes / 60);
-      const slotStartMin = currentMinutes % 60;
+      const [startHour, startMin] = startTime.split(":").map(Number);
+      const [endHour, endMin] = endTime.split(":").map(Number);
 
-      const nextMinutes = currentMinutes + intervalMinutes;
-      const slotEndHour = Math.floor(nextMinutes / 60);
-      const slotEndMin = nextMinutes % 60;
+      let currentMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
 
-      const formatTime = (h: number, m: number) => {
-        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
-      };
+      while (currentMinutes + intervalMinutes <= endMinutes) {
+        const slotStartHour = Math.floor(currentMinutes / 60);
+        const slotStartMin = currentMinutes % 60;
 
-      slotsToInsert.push({
-        availability_block_id: blockId,
-        professional_id: professionalId,
-        date,
-        start_time: formatTime(slotStartHour, slotStartMin),
-        end_time: formatTime(slotEndHour, slotEndMin),
-        status: "available",
-      });
+        const nextMinutes = currentMinutes + intervalMinutes;
+        const slotEndHour = Math.floor(nextMinutes / 60);
+        const slotEndMin = nextMinutes % 60;
 
-      currentMinutes = nextMinutes;
+        const formatTime = (h: number, m: number) => {
+          return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+        };
+
+        slotsToInsert.push({
+          availability_block_id: blockId,
+          professional_id: professionalId,
+          date,
+          start_time: formatTime(slotStartHour, slotStartMin),
+          end_time: formatTime(slotEndHour, slotEndMin),
+          status: "available",
+        });
+
+        currentMinutes = nextMinutes;
+      }
     }
 
     if (slotsToInsert.length === 0) {
@@ -1152,4 +1159,12 @@ export async function createInternalAppointmentAction(
       message: "Erro interno crítico ao processar o agendamento manual.",
     };
   }
+}
+
+/**
+ * Server Action para carregar horários disponíveis no Dashboard em tempo real.
+ */
+export async function fetchDashboardCalendarSlotsAction(professionalId: string) {
+  const { fetchDashboardCalendarSlots } = await import("./queries");
+  return fetchDashboardCalendarSlots(professionalId);
 }

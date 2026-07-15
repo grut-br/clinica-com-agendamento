@@ -1,12 +1,17 @@
 import React from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getRecentAppointments, getUserProfile, getAllProfessionals } from "@/features/appointments/queries";
 import { logoutAction } from "@/features/auth/actions";
 import { DashboardAppointmentsList } from "@/features/appointments/components/dashboard-appointments-list";
 import { InternalAppointmentDialog } from "@/features/appointments/components/internal-appointment-dialog";
 import { Clock } from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { createClient } from "@/lib/supabase/server";
+
+import { DashboardTabsView } from "@/features/appointments/components/dashboard-tabs-view";
+import { DashboardCalendarView } from "@/features/appointments/components/dashboard-calendar-view";
+import { SlotGeneratorDialog } from "@/features/appointments/components/slot-generator-dialog";
 
 export const metadata: Metadata = {
   title: "Painel de Agendamentos | Med Odonto",
@@ -52,46 +57,35 @@ export default async function DashboardPage() {
     );
   }
 
-  // 2. Busca agendamentos recentes para a recepção/administração
-  const appointments = await getRecentAppointments();
-  const professionals = await getAllProfessionals();
+  // 2. Busca agendamentos recentes e dados do calendário
+  const supabase = await createClient();
+
+  const [appointments, professionalsList, specialtiesRes, professionalsRes] = await Promise.all([
+    getRecentAppointments(),
+    getAllProfessionals(),
+    supabase.from("specialties").select("id, name, slug").eq("is_active", true).order("name", { ascending: true }),
+    supabase.from("professionals").select("id, name, specialty_id").eq("is_active", true).order("name", { ascending: true })
+  ]);
+
+  const specialties = specialtiesRes.data || [];
+  const professionals = professionalsRes.data || [];
 
   return (
     <div className="space-y-8 min-h-[80vh]">
       
       {/* Cabeçalho do Painel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Painel de Agendamentos
-          </h1>
-          <p className="text-muted-foreground font-light">
-            Gerenciamento e triagem de pré-agendamentos da clínica. Confirme ou cancele as solicitações abaixo.
-          </p>
-        </div>
-        <div className="shrink-0">
-          <InternalAppointmentDialog professionals={professionals} />
-        </div>
-      </div>
+      <PageHeader 
+        title="Painel de Agendamentos"
+        description="Gerenciamento e triagem de pré-agendamentos da clínica. Confirme ou cancele as solicitações abaixo."
+      >
+        <InternalAppointmentDialog professionals={professionalsList} />
+      </PageHeader>
 
-      {/* Abas de Navegação Rápida no Cabeçalho */}
-      <div className="flex border-b border-border gap-6">
-        <Link 
-          href="/dashboard"
-          className="pb-3 border-b-2 border-secondary text-sm font-bold text-foreground transition-all cursor-pointer"
-        >
-          Solicitações Pendentes
-        </Link>
-        <Link 
-          href="/dashboard/agenda"
-          className="pb-3 border-b-2 border-transparent text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-all cursor-pointer"
-        >
-          Gerenciar Agenda
-        </Link>
-      </div>
-
-      {/* Catálogo com Filtro de Status Interativo e Triagem Reativa */}
-      <DashboardAppointmentsList initialAppointments={appointments} />
+      <DashboardTabsView 
+        pendingAppointments={<DashboardAppointmentsList initialAppointments={appointments} />}
+        calendarContent={<DashboardCalendarView specialties={specialties} professionals={professionals} />}
+        generatorDialog={<SlotGeneratorDialog specialties={specialties} professionals={professionals} />}
+      />
       
     </div>
   );

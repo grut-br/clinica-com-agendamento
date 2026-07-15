@@ -39,11 +39,11 @@ export default async function AgendarPage({ params }: AgendarPageProps) {
       <div className="container mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         
         {/* Título do Fluxo de Agendamento */}
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight">
-            Agendamento de Consultas
+        <div className="text-center w-full mx-auto mb-10 bg-[#0B1A3A] py-16 px-6 rounded-3xl">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <span className="text-[#D4AF37]">Agendamento</span> de Consultas
           </h1>
-          <p className="mt-3 text-sm text-zinc-550 font-light leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-white/80 font-light leading-relaxed max-w-2xl mx-auto">
             Siga as etapas abaixo para selecionar sua especialidade, escolher o melhor horário e preencher seus dados de contato.
           </p>
         </div>

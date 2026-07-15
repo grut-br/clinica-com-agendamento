@@ -20,8 +20,8 @@ export default async function ExamesPage() {
   return (
     <div className="flex-1 bg-slate-50">
       
-      {/* 1. Hero Section (Fundo Escuro bg-primary com título Ultralab em Dourado) */}
-      <section className="bg-primary py-16 sm:py-20 relative overflow-hidden text-white">
+      {/* 1. Hero Section (Fundo Escuro bg-[#0B1A3A] com título Ultralab em Dourado) */}
+      <section className="bg-[#0B1A3A] py-16 sm:py-20 relative overflow-hidden text-white">
         {/* Glows de background */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-20%] right-[-10%] h-[300px] w-[300px] rounded-full bg-secondary/15 blur-[80px]" />
@@ -33,14 +33,14 @@ export default async function ExamesPage() {
           <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm text-zinc-400 mb-6 font-medium">
             <Link href="/" className="hover:text-white transition-colors">Início</Link>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-secondary">Exames</span>
+            <span className="text-[#D4AF37]">Exames</span>
           </div>
 
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white">
-              <span className="text-secondary">Ultralab</span> Diagnósticos
+              <span className="text-[#D4AF37]">Ultralab</span> Diagnósticos
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-slate-300 font-light leading-relaxed">
+            <p className="mt-4 text-base sm:text-lg text-white/80 font-light leading-relaxed">
               Tecnologia de ponta, rapidez no atendimento e laudos precisos. Filtre por tipo de exame e consulte instruções de preparo, preços e agendamentos.
             </p>
           </div>

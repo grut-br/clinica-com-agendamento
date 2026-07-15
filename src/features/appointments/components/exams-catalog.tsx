@@ -92,8 +92,8 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
             />
           </div>
 
-          <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Layers className="h-4.5 w-4.5 text-secondary" />
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Layers className="h-4.5 w-4.5 text-[#D4AF37]" />
             Categorias
           </h3>
           <nav className="flex flex-col gap-1.5" aria-label="Filtro de exames do laboratório">
@@ -107,8 +107,8 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                   onClick={() => setSelectedCategory(category)}
                   className={`w-full flex items-center justify-between min-h-[3rem] text-left px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                     isActive 
-                      ? "bg-primary text-white shadow-md shadow-primary/10" 
-                      : "text-slate-650 hover:bg-slate-50 hover:text-primary"
+                      ? "bg-[#0B1A3A] text-white shadow-md shadow-[#0B1A3A]/10" 
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <span className="whitespace-normal text-left leading-tight break-words py-1 flex-1">{category}</span>
@@ -129,8 +129,8 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
         {filteredExams.length === 0 ? (
           <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl text-zinc-400 font-light text-sm shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center p-6">
             <Search className="h-10 w-10 text-slate-350 mb-3" />
-            <h4 className="text-base font-bold text-primary">Nenhum exame encontrado</h4>
-            <p className="text-xs text-zinc-500 mt-1">
+            <h4 className="text-base font-bold text-slate-900">Nenhum exame encontrado</h4>
+            <p className="text-xs text-slate-600 mt-1">
               Tente redefinir o termo de pesquisa ou selecionar outra categoria.
             </p>
           </div>
@@ -155,7 +155,7 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                   className="flex flex-col justify-between rounded-3xl bg-white border border-slate-100 p-6 sm:p-7 shadow-[0_8px_30px_rgb(0,0,0,0.03)] transition-all duration-300 hover:scale-[1.015] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] relative overflow-hidden group"
                 >
                   <div className={`absolute top-0 left-0 right-0 h-[3px] transition-opacity duration-300 opacity-0 group-hover:opacity-100 ${
-                    requiresScheduling ? "bg-secondary" : "bg-primary"
+                    requiresScheduling ? "bg-[#D4AF37]" : "bg-[#0B1A3A]"
                   }`} />
 
                   <div>
@@ -163,23 +163,23 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                     <div className="flex items-center justify-between mb-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-2xs font-bold ${
                         requiresScheduling 
-                          ? "bg-amber-50 text-amber-700 border border-amber-200/50" 
-                          : "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
+                          ? "bg-amber-50 text-amber-900 border border-amber-200/50" 
+                          : "bg-emerald-50 text-emerald-900 border border-emerald-200/50"
                       }`}>
                         {requiresScheduling ? "Agendado" : "Ordem de Chegada"}
                       </span>
-                      <span className="text-zinc-500 font-extrabold text-xs">
+                      <span className="text-slate-900 font-extrabold text-xs">
                         {formatPrice(exam.price)}
                       </span>
                     </div>
 
                     {/* Nome do Exame */}
-                    <h4 className="text-lg font-bold text-primary mb-2 truncate" title={exam.name}>
+                    <h4 className="text-lg font-bold text-slate-900 mb-2 truncate" title={exam.name}>
                       {exam.name}
                     </h4>
 
                     {/* Descrição */}
-                    <p className="text-xs text-zinc-500 leading-relaxed font-light mb-6 line-clamp-3">
+                    <p className="text-xs text-slate-600 leading-relaxed font-light mb-6 line-clamp-3">
                       {exam.description || "Exame de alta precisão diagnóstica realizado no laboratório Ultralab."}
                     </p>
                   </div>
@@ -188,7 +188,7 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                   <div className="flex gap-2.5 mt-auto pt-4 border-t border-slate-50 w-full font-sans">
                     <Link
                       href={`/exames/${slugNormalized}`}
-                      className="flex-1 py-2 rounded-xl border border-primary/30 text-primary hover:bg-primary/5 text-center text-xs font-bold transition-all"
+                      className="flex-1 py-2 rounded-xl border border-[#0B1A3A] text-[#0B1A3A] hover:bg-slate-50 text-center text-xs font-bold transition-all"
                     >
                       Preparo
                     </Link>
@@ -198,7 +198,7 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                         href={`${whatsappUrl}${msgAgendar}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 py-2 rounded-xl bg-secondary hover:bg-secondary-hover text-primary text-center text-xs font-extrabold shadow-sm transition-all active:scale-95 cursor-pointer"
+                        className="flex-1 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#B5952F] text-[#0B1A3A] text-center text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
                       >
                         Agendar
                       </a>
@@ -207,7 +207,7 @@ export function ExamsCatalog({ exams }: ExamsCatalogProps) {
                         href={`${whatsappUrl}${msgOrienta}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-center text-xs font-extrabold shadow-sm transition-all active:scale-95 cursor-pointer"
+                        className="flex-1 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#B5952F] text-[#0B1A3A] text-center text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
                       >
                         Orientações
                       </a>

@@ -119,8 +119,8 @@ export function SpecialtiesCatalog({ specialties }: SpecialtiesCatalogProps) {
             />
           </div>
 
-          <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Layers className="h-4.5 w-4.5 text-secondary" />
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Layers className="h-4.5 w-4.5 text-[#D4AF37]" />
             Categorias
           </h3>
           <nav className="flex flex-col gap-1.5" aria-label="Filtro de especialidades">
@@ -134,8 +134,8 @@ export function SpecialtiesCatalog({ specialties }: SpecialtiesCatalogProps) {
                   onClick={() => setSelectedCategory(category)}
                   className={`w-full flex items-center justify-between min-h-[3rem] text-left px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                     isActive 
-                      ? "bg-primary text-white shadow-md shadow-primary/10" 
-                      : "text-slate-650 hover:bg-slate-50 hover:text-primary"
+                      ? "bg-[#0B1A3A] text-white shadow-md shadow-[#0B1A3A]/10" 
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <span className="whitespace-normal text-left leading-tight break-words py-1 flex-1">{category}</span>
@@ -156,8 +156,8 @@ export function SpecialtiesCatalog({ specialties }: SpecialtiesCatalogProps) {
         {filteredSpecialties.length === 0 ? (
           <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl text-zinc-400 font-light text-sm shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center p-6">
             <Search className="h-10 w-10 text-slate-350 mb-3" />
-            <h4 className="text-base font-bold text-primary">Nenhuma especialidade encontrada</h4>
-            <p className="text-xs text-zinc-500 mt-1">
+            <h4 className="text-base font-bold text-slate-900">Nenhuma especialidade encontrada</h4>
+            <p className="text-xs text-slate-600 mt-1">
               Tente redefinir o termo de pesquisa ou selecionar outra categoria.
             </p>
           </div>
@@ -173,21 +173,21 @@ export function SpecialtiesCatalog({ specialties }: SpecialtiesCatalogProps) {
                   key={specialty.id}
                   className="flex flex-col justify-between rounded-3xl bg-white border border-slate-100 p-6 sm:p-7 shadow-[0_8px_30px_rgb(0,0,0,0.03)] transition-all duration-300 hover:scale-[1.015] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] relative overflow-hidden group"
                 >
-                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <div>
                     {/* Container do Ícone */}
-                    <div className="h-11 w-11 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-5 border border-primary/5">
-                      <IconComponent className="h-5.5 w-5.5 text-secondary" />
+                    <div className="h-11 w-11 rounded-xl bg-slate-50 text-[#0B1A3A] flex items-center justify-center mb-5 border border-slate-100">
+                      <IconComponent className="h-5.5 w-5.5 text-[#D4AF37]" />
                     </div>
 
                     {/* Nome da Especialidade */}
-                    <h4 className="text-lg font-bold text-primary mb-2.5 truncate" title={specialty.name}>
+                    <h4 className="text-lg font-bold text-slate-900 mb-2.5 truncate" title={specialty.name}>
                       {specialty.name}
                     </h4>
 
                     {/* Descrição */}
-                    <p className="text-xs text-zinc-500 leading-relaxed font-light mb-6 line-clamp-3">
+                    <p className="text-xs text-slate-600 leading-relaxed font-light mb-6 line-clamp-3">
                       {description}
                     </p>
                   </div>
@@ -196,13 +196,13 @@ export function SpecialtiesCatalog({ specialties }: SpecialtiesCatalogProps) {
                   <div className="flex gap-2.5 mt-auto w-full font-sans">
                     <Link
                       href={`/especialidades/${slugNormalized}`}
-                      className="flex-1 py-2 rounded-xl border border-primary/30 text-primary hover:bg-primary/5 text-center text-xs font-bold transition-all"
+                      className="flex-1 py-2 rounded-xl border border-[#0B1A3A] text-[#0B1A3A] hover:bg-slate-50 text-center text-xs font-bold transition-all"
                     >
                       Saiba mais
                     </Link>
                     <Link
                       href={`/agendar/${slugNormalized}`}
-                      className="flex-1 py-2 rounded-xl bg-secondary hover:bg-secondary-hover text-primary text-center text-xs font-extrabold shadow-sm transition-all active:scale-95 cursor-pointer"
+                      className="flex-1 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#B5952F] text-[#0B1A3A] text-center text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
                     >
                       Agendar
                     </Link>

@@ -14,7 +14,7 @@ export default async function EspecialidadesPage() {
     <div className="flex-1 bg-slate-50">
       
       {/* Page Header (Alinhado com o padrão de /exames) */}
-      <section className="bg-primary py-16 sm:py-20 relative overflow-hidden text-white">
+      <section className="bg-[#0B1A3A] py-16 sm:py-20 relative overflow-hidden text-white">
         {/* Glows de background */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-20%] right-[-10%] h-[300px] w-[300px] rounded-full bg-secondary/15 blur-[80px]" />
@@ -26,14 +26,14 @@ export default async function EspecialidadesPage() {
           <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm text-zinc-400 mb-6 font-medium">
             <Link href="/" className="hover:text-white transition-colors">Início</Link>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-secondary">Especialidades</span>
+            <span className="text-[#D4AF37]">Especialidades</span>
           </div>
 
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white">
-              Nossas <span className="text-secondary">Especialidades</span>
+              Nossas <span className="text-[#D4AF37]">Especialidades</span>
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl font-light leading-relaxed">
+            <p className="mt-4 text-base sm:text-lg text-white/80 max-w-2xl font-light leading-relaxed">
               Filtre por categoria médica e odontológica para encontrar o especialista ideal e agendar o seu atendimento em minutos.
             </p>
           </div>

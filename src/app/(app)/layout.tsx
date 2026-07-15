@@ -1,3 +1,4 @@
+import "../globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { WhiteLabelInjector } from "@/components/layout/WhiteLabelInjector";

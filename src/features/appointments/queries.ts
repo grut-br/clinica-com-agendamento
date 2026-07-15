@@ -523,3 +523,56 @@ export async function getAllProfiles() {
     return [];
   }
 }
+
+/**
+ * Consulta horários físicos disponíveis no Dashboard para um profissional específico.
+ */
+export async function fetchDashboardCalendarSlots(professionalId: string) {
+  try {
+    const supabase = await createClient();
+    
+    // Obter data de hoje no formato YYYY-MM-DD
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const currentTime = now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+
+    const { data, error } = await supabase
+      .from("appointment_slots")
+      .select(`
+        id,
+        date,
+        start_time,
+        end_time,
+        status,
+        availability_blocks!inner (
+          professional_id
+        )
+      `)
+      .eq("status", "available")
+      .eq("availability_blocks.professional_id", professionalId)
+      .gte("date", today);
+
+    if (error) {
+      console.error("[FETCH_DASHBOARD_CALENDAR_SLOTS_ERROR]:", error);
+      return [];
+    }
+
+    // Filtrar horários passados se a data for hoje
+    const filteredSlots = (data || []).filter((slot) => {
+      if (slot.date === today) {
+        return slot.start_time > currentTime;
+      }
+      return true;
+    });
+
+    // Ordenar em ordem cronológica
+    return filteredSlots.sort((a, b) => {
+      const dtA = `${a.date}T${a.start_time}`;
+      const dtB = `${b.date}T${b.start_time}`;
+      return dtA.localeCompare(dtB);
+    });
+  } catch (error) {
+    console.error("[FETCH_DASHBOARD_CALENDAR_SLOTS_CRITICAL_ERROR]:", error);
+    return [];
+  }
+}

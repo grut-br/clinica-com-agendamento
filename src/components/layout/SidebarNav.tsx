@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
   Settings, 
-  Calendar, 
   FolderOpen, 
   Stethoscope, 
   Clipboard, 
@@ -23,7 +22,6 @@ export function SidebarNav({ role }: SidebarNavProps) {
 
   const menuItens = useMemo(() => [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Gerenciar Agenda", href: "/dashboard/agenda", icon: Calendar },
     { label: "Catálogo", href: "/dashboard/catalogo", icon: FolderOpen },
     { label: "Corpo Clínico", href: "/dashboard/profissionais", icon: Stethoscope },
     { label: "Meus Atendimentos", href: "/dashboard/meus-atendimentos", icon: Clipboard },

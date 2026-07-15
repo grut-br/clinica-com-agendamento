@@ -13,8 +13,7 @@ import {
   ChevronLeft,
   AlertCircle,
   Stethoscope,
-  Smile,
-  ChevronRight
+  Smile
 } from "lucide-react";
 import { bookPublicAppointmentAction, fetchPublicAvailableSlotsAction } from "../actions";
 import { ActionState } from "@/lib/action-state";
@@ -57,7 +56,7 @@ const initialState: ActionState = {
 };
 
 export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFormProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
   
   // Escolha da Especialidade (Etapa 1)
   const [selectedSpecialtyId, setSelectedSpecialtyId] = useState<string>(initialSpecialtyId);
@@ -140,12 +139,11 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
     const doctorName = slot.professional?.name || "Sem preferência";
 
     setSelectedSlotLabel(`${dateFormatted} às ${timeFormatted}h com ${doctorName}`);
-    setStep(3);
+    setStep(2);
   };
 
   const handleGoBack = () => {
     if (step === 2) setStep(1);
-    if (step === 3) setStep(2);
   };
 
   const formatDayHeader = (dateStr: string) => {
@@ -174,24 +172,22 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
           )}
           <div>
             {selectedSpecialtyName && (
-              <span className="text-2xs font-bold uppercase tracking-wider text-secondary">
+              <span className="text-2xs font-bold uppercase tracking-wider text-[#D4AF37]">
                 {selectedSpecialtyName}
               </span>
             )}
-            <h2 className="text-xl font-bold text-primary">
+            <h2 className="text-xl font-bold text-slate-900">
               {state.success 
                 ? "Consulta Solicitada!" 
                 : step === 1 
                   ? "Qual o atendimento?" 
-                  : step === 2 
-                    ? "Escolha o profissional e horário" 
-                    : "Preencha seus dados de contato"
+                  : "Preencha seus dados de contato"
               }
             </h2>
           </div>
         </div>
         <div className="text-xs font-bold text-slate-400">
-          Etapa {state.success ? 4 : step} de 4
+          Etapa {state.success ? 3 : step} de 3
         </div>
       </div>
 
@@ -210,18 +206,18 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
               <CheckCircle2 className="h-10 w-10" />
             </div>
 
-            <h3 className="text-2xl font-bold text-primary mb-2">
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">
               Pedido de Agendamento Enviado!
             </h3>
             
-            <p className="text-sm text-zinc-500 leading-relaxed font-light max-w-md mb-8">
+            <p className="text-sm text-slate-600 leading-relaxed font-light max-w-md mb-8">
               Sua solicitação de atendimento foi registrada com sucesso. Nossa equipe entrará em contato via <strong className="font-bold text-emerald-600">WhatsApp</strong> para confirmar a sua consulta e enviar o preparo necessário.
             </p>
 
             <div className="w-full space-y-3">
               <Link
                 href="/especialidades"
-                className="w-full inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-hover text-white py-3.5 px-4 text-sm font-semibold transition-colors text-center"
+                className="w-full inline-flex items-center justify-center rounded-xl bg-[#0B1A3A] hover:bg-slate-800 text-white py-3.5 px-4 text-sm font-semibold transition-colors text-center"
               >
                 Voltar para Especialidades
               </Link>
@@ -235,7 +231,7 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
           </motion.div>
         ) : step === 1 ? (
           
-          /* PASSO 1: SELEÇÃO DE ESPECIALIDADE */
+          /* PASSO 1: SELEÇÃO DE ESPECIALIDADE E HORÁRIOS */
           <motion.div
             key="step1"
             initial={{ opacity: 0, y: 10 }}
@@ -244,15 +240,15 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
             className="space-y-6"
           >
             <div className="flex flex-col gap-2">
-              <label htmlFor="specialty" className="text-sm font-semibold text-primary flex items-center gap-1.5">
-                <Stethoscope className="h-4.5 w-4.5 text-secondary" />
+              <label htmlFor="specialty" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                <Stethoscope className="h-4.5 w-4.5 text-[#D4AF37]" />
                 Selecione a Especialidade Desejada
               </label>
               <select
                 id="specialty"
                 value={selectedSpecialtyId}
                 onChange={(e) => setSelectedSpecialtyId(e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm font-medium text-primary outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition-all focus:border-[#0B1A3A]/50 focus:ring-2 focus:ring-[#0B1A3A]/5 cursor-pointer"
               >
                 {specialties.map((spec) => (
                   <option key={spec.id} value={spec.id}>
@@ -262,80 +258,63 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
               </select>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary hover:bg-primary-hover text-white py-4 px-6 text-sm font-bold shadow-md transition-all cursor-pointer active:scale-98"
-            >
-              Avançar para Horários
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </motion.div>
-        ) : step === 2 ? (
-          
-          /* PASSO 2: SELEÇÃO DE PROFISSIONAL E HORÁRIO DO BANCO */
-          <motion.div
-            key="step2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="space-y-6"
-          >
-            {loadingSlots ? (
-              <div className="py-16 text-center text-sm text-zinc-400 font-light flex items-center justify-center gap-2">
-                <span className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                Carregando horários em tempo real...
-              </div>
-            ) : availableSlots.length === 0 ? (
-              <div className="py-16 text-center bg-slate-50 border border-dashed border-slate-200 rounded-3xl p-8 max-w-md mx-auto">
-                <Smile className="h-10 w-10 text-zinc-300 mx-auto mb-3" />
-                <h4 className="text-sm font-bold text-primary">Nenhum horário disponível no momento</h4>
-                <p className="text-xs text-zinc-400 font-light mt-1 max-w-xs mx-auto leading-relaxed">
-                  Todos os horários desta especialidade já foram reservados. Entre em contato com a clínica para solicitar um encaixe.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="mt-4 px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-primary rounded-xl cursor-pointer"
-                >
-                  Alterar Especialidade
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {Object.keys(groupedSlotsByDate).map((date) => (
-                  <div key={date} className="space-y-3">
-                    <h4 className="text-xs font-bold text-zinc-450 uppercase tracking-wider border-b border-slate-100 pb-1 flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-secondary" />
-                      {formatDayHeader(date)}
-                    </h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {groupedSlotsByDate[date].map((slot) => (
-                        <button
-                          type="button"
-                          key={slot.id}
-                          onClick={() => handleSelectSlot(slot)}
-                          className="flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200/80 bg-white hover:border-primary hover:bg-primary/5 transition-all text-center gap-1 cursor-pointer active:scale-95 group"
-                        >
-                          <span className="font-extrabold text-sm text-primary group-hover:text-primary">
-                            {slot.start_time.substring(0, 5)}
-                          </span>
-                          <span className="text-3xs text-zinc-400 font-light truncate max-w-full">
-                            {slot.professional?.name || "Sem preferência"}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+            {selectedSpecialtyId && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, y: -20 }}
+                animate={{ opacity: 1, height: "auto", y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="overflow-hidden"
+              >
+                {loadingSlots ? (
+                  <div className="py-16 text-center text-sm text-zinc-400 font-light flex items-center justify-center gap-2">
+                    <span className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    Carregando horários em tempo real...
                   </div>
-                ))}
-              </div>
+                ) : availableSlots.length === 0 ? (
+                  <div className="py-16 text-center bg-slate-50 border border-dashed border-slate-200 rounded-3xl p-8 max-w-md mx-auto">
+                    <Smile className="h-10 w-10 text-zinc-300 mx-auto mb-3" />
+                    <h4 className="text-sm font-bold text-slate-900">Nenhum horário disponível no momento</h4>
+                    <p className="text-xs text-slate-600 font-light mt-1 max-w-xs mx-auto leading-relaxed">
+                      Todos os horários desta especialidade já foram reservados. Entre em contato com a clínica para solicitar um encaixe.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {Object.keys(groupedSlotsByDate).map((date) => (
+                      <div key={date} className="space-y-3">
+                        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-100 pb-1 flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-[#D4AF37]" />
+                          {formatDayHeader(date)}
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {groupedSlotsByDate[date].map((slot) => (
+                            <button
+                              type="button"
+                              key={slot.id}
+                              onClick={() => handleSelectSlot(slot)}
+                              className="flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200/80 bg-white hover:border-[#0B1A3A] hover:bg-slate-50 transition-all text-center gap-1 cursor-pointer active:scale-95 group"
+                            >
+                              <span className="font-extrabold text-sm text-[#0B1A3A] group-hover:text-[#0B1A3A]">
+                                {slot.start_time.substring(0, 5)}
+                              </span>
+                              <span className="text-3xs text-slate-500 font-light truncate max-w-full">
+                                {slot.professional?.name || "Sem preferência"}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             )}
           </motion.div>
         ) : (
           
-          /* PASSO 3: DADOS PESSOAIS DO PACIENTE */
+          /* PASSO 2: DADOS PESSOAIS DO PACIENTE */
           <motion.div
-            key="step3"
+            key="step2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -365,8 +344,8 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
 
               {/* Nome */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="name" className="text-sm font-semibold text-primary flex items-center gap-1.5">
-                  <User className="h-4.5 w-4.5 text-zinc-400" />
+                <label htmlFor="name" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                  <User className="h-4.5 w-4.5 text-slate-400" />
                   Nome Completo <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -378,14 +357,14 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   placeholder="Ex: Clara de Souza Pires"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-primary placeholder-slate-400 outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-[#0B1A3A]/50 focus:ring-2 focus:ring-[#0B1A3A]/5"
                 />
               </div>
 
               {/* WhatsApp */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="whatsapp" className="text-sm font-semibold text-primary flex items-center gap-1.5">
-                  <Phone className="h-4.5 w-4.5 text-zinc-400" />
+                <label htmlFor="whatsapp" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                  <Phone className="h-4.5 w-4.5 text-slate-400" />
                   WhatsApp <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -397,15 +376,15 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="Ex: 98920033319"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-primary placeholder-slate-400 outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-[#0B1A3A]/50 focus:ring-2 focus:ring-[#0B1A3A]/5"
                 />
               </div>
 
               {/* Data Nascimento */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="birthDate" className="text-sm font-semibold text-primary flex items-center gap-1.5">
-                  <Calendar className="h-4.5 w-4.5 text-zinc-400" />
-                  Data de Nascimento <span className="text-xs font-normal text-zinc-400">(Opcional)</span>
+                <label htmlFor="birthDate" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                  <Calendar className="h-4.5 w-4.5 text-slate-400" />
+                  Data de Nascimento <span className="text-xs font-normal text-slate-500">(Opcional)</span>
                 </label>
                 <input
                   id="birthDate"
@@ -414,15 +393,15 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
                   disabled={isPending}
                   value={dataNascimento}
                   onChange={(e) => setDataNascimento(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-primary outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 outline-none transition-all focus:border-[#0B1A3A]/50 focus:ring-2 focus:ring-[#0B1A3A]/5"
                 />
               </div>
 
               {/* Observações */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="notes" className="text-sm font-semibold text-primary flex items-center gap-1.5">
-                  <MessageSquare className="h-4.5 w-4.5 text-zinc-400" />
-                  Observações <span className="text-xs font-normal text-zinc-400">(Opcional)</span>
+                <label htmlFor="notes" className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                  <MessageSquare className="h-4.5 w-4.5 text-slate-400" />
+                  Observações <span className="text-xs font-normal text-slate-500">(Opcional)</span>
                 </label>
                 <textarea
                   id="notes"
@@ -432,7 +411,7 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
                   onChange={(e) => setObservacoes(e.target.value)}
                   placeholder="Se necessário, informe sintomas, convênios ou alguma necessidade específica de acessibilidade..."
                   rows={3}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-primary placeholder-slate-400 outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-[#0B1A3A]/50 focus:ring-2 focus:ring-[#0B1A3A]/5 resize-none"
                 />
               </div>
 
@@ -440,7 +419,7 @@ export function SchedulingForm({ specialties, initialSpecialtyId }: SchedulingFo
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-secondary hover:bg-secondary-hover py-4 px-6 text-base font-bold text-primary transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#D4AF37] hover:bg-[#B5952F] py-4 px-6 text-base font-bold text-[#0B1A3A] transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
                 {isPending ? "Confirmando Horário..." : "Finalizar Solicitação"}
               </button>
