@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { SlotGeneratorForm } from "./slot-generator-form";
+import { Button } from "@/components/ui/button";
 
 interface SpecialtyItem {
   id: string;
@@ -26,16 +27,16 @@ export function SlotGeneratorDialog({ specialties, professionals }: SlotGenerato
 
   return (
     <>
-      <button 
+      <Button 
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm"
+        variant="primary"
       >
         <Plus className="h-4 w-4 shrink-0" />
         Gerar Nova Grade
-      </button>
+      </Button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -44,12 +45,15 @@ export function SlotGeneratorDialog({ specialties, professionals }: SlotGenerato
           
           {/* Dialog Content */}
           <div className="relative w-full max-w-2xl bg-card rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <button 
+            <Button 
+              variant="ghost"
+              size="icon"
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors z-10 cursor-pointer"
+              className="absolute top-4 right-4 z-10"
+              aria-label="Fechar modal"
             >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
             <SlotGeneratorForm specialties={specialties} professionals={professionals} />
           </div>
         </div>

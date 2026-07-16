@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useActionState, useEffect, useState } from "react";
-import { X, Save, UserPlus, Stethoscope, AlertCircle, CheckCircle2, Key, Mail } from "lucide-react";
+import { X, Save, UserPlus, Stethoscope, AlertCircle, CheckCircle2, Key, Mail, Shield } from "lucide-react";
 import { createInternalUserAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
 interface ProfessionalItem {
   id: string;
@@ -56,12 +57,14 @@ export function CreateUserDialog({ isOpen, onClose, professionals }: CreateUserD
             <UserPlus className="h-5 w-5 text-secondary" />
             Cadastrar Novo Usuário
           </h3>
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Formulário */}
@@ -80,16 +83,16 @@ export function CreateUserDialog({ isOpen, onClose, professionals }: CreateUserD
                 type="email"
                 required
                 disabled={isPending}
-                placeholder="Ex: medico@medodonto.com"
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 font-medium"
+                placeholder="Ex: joao.silva@medodonto.com"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
               />
             </div>
 
-            {/* Senha Provisória */}
+            {/* Senha */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="password" className="text-2xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                 <Key className="h-3.5 w-3.5 text-muted-foreground" />
-                Senha Provisória
+                Senha de Acesso
               </label>
               <input
                 id="password"
@@ -98,52 +101,57 @@ export function CreateUserDialog({ isOpen, onClose, professionals }: CreateUserD
                 required
                 disabled={isPending}
                 placeholder="Mínimo 6 caracteres"
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
               />
             </div>
 
-            {/* Select Role */}
+            {/* Nível de Acesso (RBAC) */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="role" className="text-2xs font-bold uppercase tracking-wider text-muted-foreground">
-                Papel Administrativo
+              <label htmlFor="role" className="text-2xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                <Shield className="h-3.5 w-3.5 text-muted-foreground" />
+                Papel / Permissão
               </label>
               <select
                 id="role"
                 name="role"
+                required
                 disabled={isPending}
                 value={role}
                 onChange={(e) => setRole(e.target.value as "admin" | "receptionist" | "doctor" | "pending")}
-                className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer font-semibold"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 cursor-pointer"
               >
-                <option value="receptionist">Recepcionista</option>
-                <option value="doctor">Médico / Corpo Clínico</option>
-                <option value="admin">Administrador</option>
+                <option value="receptionist">Recepcionista / Recepção</option>
+                <option value="doctor">Corpo Clínico / Médico</option>
+                <option value="admin">Administrador Geral</option>
               </select>
             </div>
 
-            {/* Select Professional (Apenas se for Doctor) */}
+            {/* Vínculo Clínico (Apenas se role for doctor) */}
             {role === "doctor" && (
-              <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-2 duration-200">
-                <label htmlFor="professionalId" className="text-2xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Stethoscope className="h-3.5 w-3.5 text-secondary" />
-                  Médico Associado
+              <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
+                <label htmlFor="professionalId" className="text-2xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <Stethoscope className="h-3.5 w-3.5 text-muted-foreground" />
+                  Profissional Clínico Vinculado
                 </label>
                 <select
                   id="professionalId"
                   name="professionalId"
+                  required
                   disabled={isPending}
                   value={professionalId}
                   onChange={(e) => setProfessionalId(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 cursor-pointer font-semibold"
-                  required
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 cursor-pointer"
                 >
-                  <option value="">-- Vincular Médico --</option>
+                  <option value="">Selecione um profissional do corpo clínico...</option>
                   {professionals.map((prof) => (
                     <option key={prof.id} value={prof.id}>
                       {prof.name}
                     </option>
                   ))}
                 </select>
+                <span className="text-[10px] text-muted-foreground font-medium">
+                  Associe esta conta de acesso a um cadastro de médico/dentista no sistema.
+                </span>
               </div>
             )}
 
@@ -165,22 +173,22 @@ export function CreateUserDialog({ isOpen, onClose, professionals }: CreateUserD
 
           {/* Rodapé */}
           <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-end gap-3 shrink-0">
-            <button
+            <Button
+              variant="outline"
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl border border-border hover:bg-muted text-xs font-bold text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-50"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
             >
               <Save className="h-4 w-4" />
               {isPending ? "Cadastrando..." : "Cadastrar Usuário"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

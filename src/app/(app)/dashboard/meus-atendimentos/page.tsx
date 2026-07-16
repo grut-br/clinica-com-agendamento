@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getDoctorAppointments, getUserProfile } from "@/features/appointments/queries";
 import { DoctorAppointmentsList } from "@/features/appointments/components/doctor-appointments-list";
 import { Stethoscope, AlertCircle } from "lucide-react";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Meus Atendimentos | Med Odonto",
@@ -32,6 +32,7 @@ export default async function MeusAtendimentosPage() {
       
       {/* Cabeçalho Principal */}
       <PageHeader 
+        eyebrow="Corpo Clínico"
         title="Painel de Atendimento Médico"
         description="Acompanhe sua agenda de consultas confirmadas do dia e realize a evolução clínica e prontuário de pacientes."
       />

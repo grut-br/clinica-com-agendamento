@@ -3,6 +3,7 @@
 import React, { useEffect, useActionState } from "react";
 import { X, Save, Layers, FileText, Tag, FlaskConical, DollarSign } from "lucide-react";
 import { upsertExamAction } from "../cms-actions";
+import { Button } from "@/components/ui/button";
 
 interface ExamItem {
   id: string;
@@ -36,8 +37,6 @@ export function ExamFormDialog({ isOpen, onClose, exam }: ExamFormDialogProps) {
 
   if (!isOpen) return null;
 
-  const categories = ["Análises Clínicas e Laboratoriais", "Exames de Imagem e Cardiológicos"];
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
       {/* Overlay Escuro com Desfoque */}
@@ -52,12 +51,14 @@ export function ExamFormDialog({ isOpen, onClose, exam }: ExamFormDialogProps) {
             <FlaskConical className="h-5 w-5 text-secondary animate-pulse" />
             {exam ? "Editar Exame" : "Novo Exame"}
           </h3>
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Formulário com Server Action */}
@@ -73,94 +74,86 @@ export function ExamFormDialog({ isOpen, onClose, exam }: ExamFormDialogProps) {
               Nome do Exame
             </label>
             <input
-              type="text"
+              id="name"
               name="name"
+              type="text"
               required
+              disabled={isPending}
               defaultValue={exam?.name || ""}
-              placeholder="Ex: Hemograma Completo, Ultrassonografia..."
-              className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-sm font-semibold placeholder:text-muted-foreground placeholder:font-light"
+              placeholder="Ex: Hemograma Completo"
+              className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 font-medium"
             />
           </div>
 
-          {/* Slug Personalizado (Opcional) */}
+          {/* Categoria do Exame */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-foreground uppercase tracking-wider">
-              Slug da URL (Opcional)
+            <label className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+              Categoria / Grupo
             </label>
             <input
+              id="category"
+              name="category"
               type="text"
-              name="slug"
-              defaultValue={exam?.slug || ""}
-              placeholder="Ex: hemograma-completo (gerado do nome se vazio)"
-              className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-sm font-semibold placeholder:text-muted-foreground placeholder:font-light"
+              required
+              disabled={isPending}
+              defaultValue={exam?.category || ""}
+              placeholder="Ex: Análises Clínicas, Imagem, Cardiologia..."
+              className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 font-medium"
             />
           </div>
 
-          {/* Categoria & Preço */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Categoria */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="h-3.5 w-3.5 text-muted-foreground" />
-                Categoria
-              </label>
-              <select
-                name="category"
-                defaultValue={exam?.category || "Análises Clínicas e Laboratoriais"}
-                className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-sm font-semibold bg-muted/50 cursor-pointer"
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Valor Particular */}
+          {/* Grid Duplo: Preço e Tipo de Agendamento */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* Preço (Estimado) */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                Preço Particular (R$)
+                Valor (R$)
               </label>
               <input
-                type="number"
+                id="price"
                 name="price"
-                required
+                type="number"
                 step="0.01"
-                min="0"
-                defaultValue={exam?.price || 0}
-                className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-sm font-semibold"
+                disabled={isPending}
+                defaultValue={exam?.price !== null && exam?.price !== undefined ? exam.price : ""}
+                placeholder="Ex: 150.00"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 font-semibold"
               />
             </div>
-          </div>
 
-          {/* Requer Agendamento (Custom Toggle/Checkbox) */}
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-muted/30 border border-border select-none">
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-foreground">Exige Agendamento</span>
-              <span className="text-2xs text-muted-foreground font-light mt-0.5">
-                Marque se o exame precisa reservar horário específico.
-              </span>
+            {/* Tipo de Agendamento */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-foreground uppercase tracking-wider">
+                Fluxo de Agendamento
+              </label>
+              <select
+                id="requiresScheduling"
+                name="requiresScheduling"
+                required
+                disabled={isPending}
+                defaultValue={exam?.requires_scheduling ? "true" : "false"}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 cursor-pointer font-semibold"
+              >
+                <option value="true">Requer Agendamento (Hora Marcada)</option>
+                <option value="false">Ordem de Chegada (Sem Hora)</option>
+              </select>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                name="requires_scheduling"
-                defaultChecked={exam?.requires_scheduling ?? true}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-muted-foreground/30 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary/10 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-muted/50 after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500" />
-            </label>
+
           </div>
 
           {/* Descrição do Exame */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-              Instruções / Descrição
+              Instruções / Preparo
             </label>
             <textarea
+              id="description"
               name="description"
-              rows={3}
+              disabled={isPending}
               defaultValue={exam?.description || ""}
               placeholder="Ex: Hemograma para contagem total de plaquetas e glóbulos..."
               className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary text-sm font-medium resize-none placeholder:text-muted-foreground placeholder:font-light"
@@ -176,22 +169,20 @@ export function ExamFormDialog({ isOpen, onClose, exam }: ExamFormDialogProps) {
 
           {/* Rodapé e Ações */}
           <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
-            <button
-              type="button"
+            <Button
+              variant="outline"
               onClick={onClose}
               disabled={isPending}
-              className="px-5 py-2.5 rounded-xl border border-border hover:bg-muted text-sm font-bold text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-50"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isPending}
-              className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-sm font-extrabold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
             >
               <Save className="h-4 w-4" />
               {isPending ? "Salvando..." : "Salvar"}
-            </button>
+            </Button>
           </div>
 
         </form>

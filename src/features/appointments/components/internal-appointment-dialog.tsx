@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { Plus, X, Calendar, Clock, User, Phone, Heart, CheckCircle, ShieldAlert } from "lucide-react";
 import { createInternalAppointmentAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
 interface Professional {
   id: string;
@@ -88,14 +89,14 @@ export function InternalAppointmentDialog({ professionals }: InternalAppointment
   return (
     <>
       {/* Botão de Trigger (+ Novo Agendamento) */}
-      <button
+      <Button
         type="button"
         onClick={handleOpen}
-        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent/90 text-white font-extrabold text-sm transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        variant="primary"
       >
         <Plus className="h-4.5 w-4.5 stroke-[2.5]" />
         Novo Agendamento
-      </button>
+      </Button>
 
       {/* Modal / Dialog */}
       {isOpen && (
@@ -116,15 +117,16 @@ export function InternalAppointmentDialog({ professionals }: InternalAppointment
                 <Calendar className="h-5 w-5 text-secondary" />
                 Agendamento Manual
               </h3>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleClose}
                 disabled={isPending}
                 aria-label="Fechar modal"
-                className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
               >
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Corpo do Formulário */}
@@ -250,21 +252,20 @@ export function InternalAppointmentDialog({ professionals }: InternalAppointment
 
               {/* Rodapé com botões de ação */}
               <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-end gap-3 shrink-0">
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
                   onClick={handleClose}
                   disabled={isPending}
-                  className="px-5 py-2.5 rounded-xl border border-border hover:bg-muted text-sm font-bold text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
+                  variant="primary"
                   disabled={isPending}
-                  className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-extrabold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
                 >
                   {isPending ? "Confirmando..." : "Confirmar Agendamento"}
-                </button>
+                </Button>
               </div>
             </form>
 

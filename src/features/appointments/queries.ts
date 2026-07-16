@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
+
 export interface AppointmentWithRelations {
   id: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
@@ -242,9 +243,6 @@ export async function fetchAvailableSlots(
   }
 }
 
-/**
- * Consulta exames ativos do laboratório Ultralab.
- */
 export async function getActiveExams() {
   try {
     const supabase = await createClient();
@@ -779,5 +777,29 @@ export async function fetchDashboardCalendarSlots(professionalId: string) {
   } catch (error) {
     console.error("[FETCH_DASHBOARD_CALENDAR_SLOTS_CRITICAL_ERROR]:", error);
     return [];
+  }
+}
+
+/**
+ * Consulta detalhes de um exame baseado no slug (case-insensitive) para a página pública.
+ */
+export async function getExamBySlug(slug: string) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("exams")
+      .select("name, description, requires_scheduling, price")
+      .ilike("slug", slug)
+      .single();
+
+    if (error) {
+      console.error("[GET_EXAM_BY_SLUG_ERROR]:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("[GET_EXAM_BY_SLUG_CRITICAL_ERROR]:", error);
+    return null;
   }
 }

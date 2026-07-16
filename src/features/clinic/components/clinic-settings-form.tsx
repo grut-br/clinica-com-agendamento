@@ -12,11 +12,17 @@ import {
   Building,
   Phone,
   MapPin,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Clock,
+  Globe,
+  Link,
+  FileText
 } from "lucide-react";
 import { updateClinicSettingsAction } from "../actions";
 import { ClinicSettings } from "../queries";
 import { hexToHslString } from "@/lib/color-utils";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 interface ClinicSettingsFormProps {
   initialSettings: ClinicSettings | null;
@@ -30,6 +36,11 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
   const [clinicName, setClinicName] = useState(initialSettings?.clinic_name || "");
   const [whatsapp, setWhatsapp] = useState(initialSettings?.whatsapp || "");
   const [address, setAddress] = useState(initialSettings?.address || "");
+  const [phone, setPhone] = useState(initialSettings?.phone || "(98) 3221-4000");
+  const [instagram, setInstagram] = useState("@odontoclinic.premium");
+  const [facebook, setFacebook] = useState("fb.com/odontoclinic.premium");
+  const [businessHours, setBusinessHours] = useState("Segunda a Sexta: 08:00 às 18:00 • Sábado: 08:00 às 12:00");
+  const [institutionalMessage, setInstitutionalMessage] = useState("Clínica médica e odontológica de alta performance, referência em tratamentos estéticos e reabilitação oral.");
   
   // Estados da Aba Aparência (Provisórios / White-label)
   const [logoUrl, setLogoUrl] = useState("https://medodonto.com/logo.png");
@@ -42,12 +53,12 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
       const savedPrimary = localStorage.getItem("clinic_primary_color");
       const savedAccent = localStorage.getItem("clinic_accent_color");
       const savedBg = localStorage.getItem("clinic_background_color");
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (savedPrimary) setPrimaryColor(savedPrimary);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (savedAccent) setAccentColor(savedAccent);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (savedBg) setBackgroundColor(savedBg);
+      
+      setTimeout(() => {
+        if (savedPrimary) setPrimaryColor(savedPrimary);
+        if (savedAccent) setAccentColor(savedAccent);
+        if (savedBg) setBackgroundColor(savedBg);
+      }, 0);
     }
   }, []);
 
@@ -216,101 +227,229 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
 
         {/* --- ABA GERAL --- */}
         {activeTab === "geral" && (
-          <form onSubmit={handleSaveGeneral} className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden text-card-foreground transition-colors duration-300">
+          <form onSubmit={handleSaveGeneral} className="space-y-6">
             
-            {/* Header do Card */}
-            <div className="px-6 py-5 border-b border-border bg-muted/20">
-              <h2 className="text-base font-bold text-card-foreground flex items-center gap-2">
-                <Building className="h-5 w-5 text-secondary animate-pulse" />
-                Dados da Clínica
-              </h2>
-              <p className="text-xs text-muted-foreground font-light mt-1">
-                Configure os dados institucionais exibidos para os pacientes no momento do agendamento.
-              </p>
+            {/* Bloco 1: Identidade da Clínica */}
+            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden text-card-foreground transition-colors duration-300">
+              <div className="px-6 py-5 border-b border-border bg-muted/20">
+                <h2 className="text-base font-bold text-card-foreground flex items-center gap-2">
+                  <Building className="h-5 w-5 text-secondary" />
+                  Identidade da Clínica
+                </h2>
+                <p className="text-xs text-muted-foreground font-light mt-1">
+                  Configure o nome, logotipo e descrição institucional da marca da clínica.
+                </p>
+              </div>
+
+              <div className="p-6 space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {/* Nome da Clínica */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="clinicName" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Nome da Clínica *
+                    </label>
+                    <div className="relative">
+                      <Building className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="clinicName"
+                        type="text"
+                        required
+                        disabled={isPending}
+                        value={clinicName}
+                        onChange={(e) => setClinicName(e.target.value)}
+                        placeholder="Ex: OdontoClinic Premium"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Logo URL (Movido para cá para unificar a Identidade) */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="logoUrl" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      URL do Logotipo
+                    </label>
+                    <div className="relative">
+                      <ImageIcon className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="logoUrl"
+                        type="text"
+                        disabled={isPending}
+                        value={logoUrl}
+                        onChange={(e) => setLogoUrl(e.target.value)}
+                        placeholder="https://sua-clinica.com/logo.png"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mensagem Institucional / Slogan */}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="institutionalMessage" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Mensagem Institucional (Slogan / Missão)
+                  </label>
+                  <div className="relative">
+                    <FileText className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                    <textarea
+                      id="institutionalMessage"
+                      disabled={isPending}
+                      rows={3}
+                      value={institutionalMessage}
+                      onChange={(e) => setInstitutionalMessage(e.target.value)}
+                      placeholder="Descreva resumidamente a missão e diferenciais da clínica..."
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50 resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Campos do Card */}
-            <div className="p-6 space-y-5">
-              
-              {/* Nome da Clínica */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="clinicName" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Nome da Clínica *
-                </label>
-                <div className="relative">
-                  <Building className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
-                  <input
-                    id="clinicName"
-                    type="text"
-                    required
-                    disabled={isPending}
-                    value={clinicName}
-                    onChange={(e) => setClinicName(e.target.value)}
-                    placeholder="Ex: Policlínica Med Odonto"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
-                  />
+            {/* Bloco 2: Contato & Localização */}
+            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden text-card-foreground transition-colors duration-300">
+              <div className="px-6 py-5 border-b border-border bg-muted/20">
+                <h2 className="text-base font-bold text-card-foreground flex items-center gap-2">
+                  <Phone className="h-5 w-5 text-secondary" />
+                  Canais de Contato & Localização
+                </h2>
+                <p className="text-xs text-muted-foreground font-light mt-1">
+                  Configure os telefones, endereços, redes sociais e horários de funcionamento da clínica.
+                </p>
+              </div>
+
+              <div className="p-6 space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {/* Telefone de Contato */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Telefone Fixo / Principal
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="phone"
+                        type="tel"
+                        disabled={isPending}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Ex: (98) 3221-4000"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* WhatsApp de Atendimento */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="whatsapp" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      WhatsApp de Atendimento
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="whatsapp"
+                        type="tel"
+                        disabled={isPending}
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="Ex: (98) 98123-4567"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Horário de Funcionamento */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="businessHours" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Horário de Funcionamento
+                    </label>
+                    <div className="relative">
+                      <Clock className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="businessHours"
+                        type="text"
+                        disabled={isPending}
+                        value={businessHours}
+                        onChange={(e) => setBusinessHours(e.target.value)}
+                        placeholder="Ex: Segunda a Sexta: 08:00 às 18:00"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Endereço Completo */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="address" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Endereço da Sede
+                    </label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="address"
+                        type="text"
+                        disabled={isPending}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Ex: Av. dos Holandeses, 1000"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Instagram */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="instagram" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Instagram da Clínica
+                    </label>
+                    <div className="relative">
+                      <Globe className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="instagram"
+                        type="text"
+                        disabled={isPending}
+                        value={instagram}
+                        onChange={(e) => setInstagram(e.target.value)}
+                        placeholder="Ex: @odontoclinic.premium"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Facebook */}
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="facebook" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Facebook da Clínica
+                    </label>
+                    <div className="relative">
+                      <Link className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
+                      <input
+                        id="facebook"
+                        type="text"
+                        disabled={isPending}
+                        value={facebook}
+                        onChange={(e) => setFacebook(e.target.value)}
+                        placeholder="Ex: fb.com/odontoclinic"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* WhatsApp de Contato */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="whatsapp" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  WhatsApp de Contato
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
-                  <input
-                    id="whatsapp"
-                    type="tel"
-                    disabled={isPending}
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="Ex: (81) 98888-8888"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
-                  />
-                </div>
+              {/* Rodapé de Ação Geral */}
+              <div className="px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-end gap-3">
+                <Button type="submit" variant="primary" disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Salvar Alterações
+                    </>
+                  )}
+                </Button>
               </div>
-
-              {/* Endereço Completo */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="address" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Endereço Completo
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
-                  <input
-                    id="address"
-                    type="text"
-                    disabled={isPending}
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Ex: Av. Governador Agamenon Magalhães, 450 - Recife/PE"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
-                  />
-                </div>
-              </div>
-
-            </div>
-
-            {/* Rodapé do Card com Ações */}
-            <div className="px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-end gap-3">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Salvando...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Salvar Alterações
-                  </>
-                )}
-              </button>
             </div>
           </form>
         )}
@@ -333,28 +472,6 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
             {/* Campos do Card */}
             <div className="p-6 space-y-6">
               
-              {/* Logo URL */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="logoUrl" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Logo URL (Provisório)
-                </label>
-                <div className="relative">
-                  <ImageIcon className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-muted-foreground/60" />
-                  <input
-                    id="logoUrl"
-                    type="text"
-                    disabled={isPending}
-                    value={logoUrl}
-                    onChange={(e) => setLogoUrl(e.target.value)}
-                    placeholder="https://sua-clinica.com/logo.png"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-muted/30 text-foreground placeholder-muted-foreground/50 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/5 focus:border-primary/50 disabled:opacity-50"
-                  />
-                </div>
-                <span className="text-[10px] text-muted-foreground font-medium">
-                  Insira o endereço HTTP de uma imagem PNG ou SVG hospedada.
-                </span>
-              </div>
-
               {/* Cor Primária */}
               <div className="flex flex-col gap-2.5">
                 <label htmlFor="primaryColor" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -459,11 +576,7 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
 
             {/* Rodapé do Card com Ações */}
             <div className="px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-end gap-3">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
-              >
+              <Button type="submit" variant="primary" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -475,7 +588,7 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
                     Salvar Aparência
                   </>
                 )}
-              </button>
+              </Button>
             </div>
 
           </form>
@@ -507,12 +620,11 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
                     Dispara uma mensagem de confirmação instantânea para o celular do paciente quando o status mudar para &quot;Confirmado&quot;.
                   </div>
                 </div>
-                <input
-                  type="checkbox"
+                <Switch
                   disabled={isPending}
                   checked={notifyWhatsapp}
-                  onChange={(e) => setNotifyWhatsapp(e.target.checked)}
-                  className="h-5 w-5 rounded border-border text-primary focus:ring-primary/25 cursor-pointer disabled:opacity-50"
+                  onCheckedChange={setNotifyWhatsapp}
+                  aria-label="Ativar notificações via WhatsApp"
                 />
               </div>
 
@@ -524,12 +636,11 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
                     Envia um alerta automático de lembrete com a data, horário e instruções de acesso um dia antes do atendimento do paciente.
                   </div>
                 </div>
-                <input
-                  type="checkbox"
+                <Switch
                   disabled={isPending}
                   checked={reminder24h}
-                  onChange={(e) => setReminder24h(e.target.checked)}
-                  className="h-5 w-5 rounded border-border text-primary focus:ring-primary/25 cursor-pointer disabled:opacity-50"
+                  onCheckedChange={setReminder24h}
+                  aria-label="Ativar lembrete 24h"
                 />
               </div>
 
@@ -541,12 +652,11 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
                     Notifica a equipe administrativa por e-mail sempre que um paciente realizar uma nova solicitação através do portal.
                   </div>
                 </div>
-                <input
-                  type="checkbox"
+                <Switch
                   disabled={isPending}
                   checked={notifyEmail}
-                  onChange={(e) => setNotifyEmail(e.target.checked)}
-                  className="h-5 w-5 rounded border-border text-primary focus:ring-primary/25 cursor-pointer disabled:opacity-50"
+                  onCheckedChange={setNotifyEmail}
+                  aria-label="Ativar notificações por e-mail"
                 />
               </div>
 
@@ -554,11 +664,7 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
 
             {/* Rodapé do Card com Ações */}
             <div className="px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-end gap-3">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
-              >
+              <Button type="submit" variant="primary" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -570,7 +676,7 @@ export function ClinicSettingsForm({ initialSettings }: ClinicSettingsFormProps)
                     Salvar Preferências
                   </>
                 )}
-              </button>
+              </Button>
             </div>
 
           </form>

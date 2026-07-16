@@ -8,6 +8,8 @@ import { AgreementsSection} from"@/components/sections/agreements-section";
 import { TeamSection} from"@/components/sections/team-section";
 import { FaqSection} from"@/components/sections/faq-section";
 
+export const revalidate = 0;
+
 export default function Home() {
  return (
  <>

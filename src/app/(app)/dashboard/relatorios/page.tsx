@@ -6,7 +6,7 @@ import { getDashboardMetricsAction } from "@/features/reports/actions";
 import { MetricsGrid } from "@/features/reports/components/metrics-grid";
 import { PopularSpecialties } from "@/features/reports/components/popular-specialties";
 import { AppointmentsChartClient } from "@/features/reports/components/appointments-chart-client";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Estatísticas da Operação | Med Odonto",
@@ -33,6 +33,7 @@ export default async function RelatoriosPage() {
       
       {/* Cabeçalho da Página */}
       <PageHeader 
+        eyebrow="Relatórios & Business Intelligence"
         title="Estatísticas da Operação"
         description="Visão gerencial consolidada sobre a volumetria de consultas, pacientes e faturamento."
       />

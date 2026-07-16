@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Devio Master Boilerplate | Fundação de Alto Padrão",
-  description: "A fundação definitiva para a criação de sites institucionais modernos, rápidos e otimizados para conversão.",
-  keywords: ["boilerplate", "nextjs", "react", "tailwind", "framer-motion", "frontend"],
-  authors: [{ name: "Devio" }],
+  title: {
+    default: "Med Odonto | Central Operacional & Agendamento Clínico",
+    template: "%s | Med Odonto"
+  },
+  description: "Plataforma integrada de agendamento de consultas, triagem de recepção e prontuário médico eletrônico para clínicas e consultórios.",
+  keywords: ["clínica", "agendamento", "médico", "dentista", "prontuário", "consultório", "saúde bucal", "recepção", "Med Odonto"],
+  authors: [{ name: "Med Odonto" }],
 };
 
 export default function RootLayout({

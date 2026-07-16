@@ -3,6 +3,7 @@
 import React, { useActionState, useEffect, useRef, useState } from "react";
 import { Key, Eye, EyeOff, Save, CheckCircle2, AlertCircle } from "lucide-react";
 import { updateUserPasswordAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
 export function UpdatePasswordForm() {
   // Hook useActionState do React 19 para a Server Action de alteração de senha
@@ -82,13 +83,15 @@ export function UpdatePasswordForm() {
             placeholder="Mínimo 6 caracteres"
             className="w-full rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-3 text-sm text-primary placeholder-slate-400 outline-none transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/5 font-semibold"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3.5 text-slate-450 hover:text-primary transition-colors cursor-pointer"
+            className="absolute right-2 top-2 h-8 w-8 text-slate-450 hover:text-primary hover:bg-transparent shrink-0"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -110,14 +113,15 @@ export function UpdatePasswordForm() {
       </div>
 
       {/* Botão de Envio */}
-      <button
+      <Button
         type="submit"
         disabled={isPending}
-        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-secondary hover:bg-secondary-hover py-3.5 px-4 text-xs font-extrabold text-primary transition-all duration-300 shadow-md active:scale-98 cursor-pointer disabled:opacity-50"
+        variant="primary"
+        className="w-full"
       >
         <Save className="h-4 w-4" />
         {isPending ? "Alterando Senha..." : "Atualizar Senha"}
-      </button>
+      </Button>
 
     </form>
   );

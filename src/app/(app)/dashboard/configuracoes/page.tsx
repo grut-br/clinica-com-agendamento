@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getUserProfile } from "@/features/appointments/queries";
 import { getClinicSettings } from "@/features/clinic/queries";
 import { ClinicSettingsForm } from "@/features/clinic/components/clinic-settings-form";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Configurações da Clínica | Med Odonto",
@@ -31,7 +31,8 @@ export default async function ConfiguracoesPage() {
       
       {/* Cabeçalho Principal */}
       <PageHeader 
-        title="Configurações da Clínica"
+        eyebrow="Configurações do Sistema"
+        title="Brand Identity & Configurações"
         description="Gerencie a identidade visual, dados institucionais e alertas de atendimento da clínica."
       />
 

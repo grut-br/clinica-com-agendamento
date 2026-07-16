@@ -2,9 +2,9 @@ import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { examsContent } from "@/lib/constants/exams-content";
 import { siteConfig } from "@/config/site";
+import { getExamBySlug } from "@/features/appointments/queries";
 import { 
   Calendar, 
   ChevronRight, 
@@ -43,17 +43,10 @@ export default async function ExamPage({ params }: ExamPageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug.toLowerCase();
 
-  const supabase = await createClient();
+  // 1. Busca os dados de precificação e agendamento do exame no Supabase usando query helper
+  const examData = await getExamBySlug(slug);
 
-  // 1. Busca os dados reais de precificação e agendamento do exame no Supabase
-  const { data: examData, error } = await supabase
-    .from("exams")
-    .select("name, description, requires_scheduling, price")
-    .ilike("slug", slug)
-    .single();
-
-  if (error || !examData) {
-    console.error("[EXAM_DETAILS_FETCH_ERROR]:", error);
+  if (!examData) {
     notFound();
   }
 

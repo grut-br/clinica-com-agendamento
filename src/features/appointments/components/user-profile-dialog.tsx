@@ -3,6 +3,7 @@
 import React, { useActionState, useEffect, useState } from "react";
 import { X, Save, Shield, Stethoscope, AlertCircle, CheckCircle2 } from "lucide-react";
 import { updateUserProfileRoleAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
 interface ProfileItem {
   id: string;
@@ -67,12 +68,14 @@ export function UserProfileDialog({ isOpen, onClose, profile, professionals }: U
             <Shield className="h-5 w-5 text-secondary" />
             Configurar Privilégios RBAC
           </h3>
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Formulário */}
@@ -153,22 +156,21 @@ export function UserProfileDialog({ isOpen, onClose, profile, professionals }: U
 
           {/* Rodapé */}
           <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-end gap-3 shrink-0">
-            <button
-              type="button"
+            <Button
+              variant="outline"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl border border-border hover:bg-muted text-xs font-bold text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-50"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
             >
               <Save className="h-4 w-4" />
               {isPending ? "Salvando..." : "Salvar Alterações"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

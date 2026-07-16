@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAllProfessionals, getAllSpecialties } from "@/features/appointments/queries";
 import { ProfessionalsManager } from "@/features/appointments/components/professionals-manager";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Corpo Clínico | Med Odonto",
@@ -32,6 +32,7 @@ export default async function ProfissionaisCmsPage() {
       
       {/* Cabeçalho do CMS */}
       <PageHeader 
+        eyebrow="Administração"
         title="Corpo Clínico (CMS)"
         description="Módulo administrativo para gerenciar profissionais de saúde, registros de classe e áreas de atendimento."
       />

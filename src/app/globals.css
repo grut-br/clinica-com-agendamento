@@ -1,49 +1,80 @@
 @import "tailwindcss";
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  
-  --border: 240 5.9% 90%;
-  
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-  
-  --accent: 43 74% 49%;
-  --accent-foreground: 210 40% 98%;
-  
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Primitive tokens: raw palette values. Components must use semantic aliases. */
+  --primitive-ink-navy: 207 56% 20%;
+  --primitive-clinic-teal: 179 66% 29%;
+  --primitive-mist: 162 24% 92%;
+  --primitive-paper: 150 20% 97%;
+  --primitive-white: 0 0% 100%;
+  --primitive-graphite: 210 23% 16%;
+  --primitive-slate: 210 18% 37%;
+  --primitive-line: 175 17% 86%;
+  --primitive-success: 151 51% 32%;
+  --primitive-warning: 38 82% 33%;
+  --primitive-danger: 355 50% 47%;
+  --primitive-info: 205 56% 40%;
+  --primitive-black: 210 23% 8%;
+
+  /* Semantic tokens: product meaning and theme contract. */
+  --background: var(--primitive-paper);
+  --foreground: var(--primitive-graphite);
+  --surface: var(--primitive-white);
+  --card: var(--primitive-white);
+  --card-foreground: var(--primitive-graphite);
+  --border: var(--primitive-line);
+  --primary: var(--primitive-ink-navy);
+  --primary-foreground: var(--primitive-white);
+  --accent: var(--primitive-clinic-teal);
+  --accent-foreground: var(--primitive-white);
+  --muted: var(--primitive-mist);
+  --muted-foreground: var(--primitive-slate);
+  --success: var(--primitive-success);
+  --warning: var(--primitive-warning);
+  --danger: var(--primitive-danger);
+  --danger-foreground: var(--primitive-white);
+  --info: var(--primitive-info);
+  --ring: var(--primitive-clinic-teal);
+
+  /* Component tokens: stable roles used by the reusable UI layer. */
+  --component-control-height: 2.75rem;
+  --component-control-radius: 0.75rem;
+  --component-card-radius: 1rem;
+  --component-card-shadow: 0 1px 2px hsl(var(--primitive-ink-navy) / 0.04);
+  --component-overlay-shadow: 0 20px 48px hsl(var(--primitive-black) / 0.16);
+  --component-focus-width: 3px;
+  --component-focus-offset: 2px;
+
+  --font-heading: "Figtree", "Segoe UI", sans-serif;
+  --font-sans: "Noto Sans", "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  
-  --border: 240 3.7% 15.9%;
-  
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  
-  --accent: 40 60% 53%;
-  --accent-foreground: 210 40% 98%;
-  
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
+  --background: 210 23% 8%;
+  --foreground: 150 20% 97%;
+  --surface: 210 21% 12%;
+  --card: 210 21% 14%;
+  --card-foreground: 150 20% 97%;
+  --border: 210 15% 25%;
+  --primary: 179 66% 47%;
+  --primary-foreground: 210 23% 8%;
+  --accent: 162 45% 52%;
+  --accent-foreground: 210 23% 8%;
+  --muted: 210 18% 19%;
+  --muted-foreground: 210 15% 72%;
+  --success: 151 51% 48%;
+  --warning: 38 82% 57%;
+  --danger: 355 65% 63%;
+  --danger-foreground: 210 23% 8%;
+  --info: 205 70% 65%;
+  --ring: 162 45% 52%;
 }
 
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
+  --color-surface: hsl(var(--surface));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
   --color-accent: hsl(var(--accent));
@@ -53,15 +84,87 @@
   --color-border: hsl(var(--border));
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-danger: hsl(var(--danger));
+  --color-danger-foreground: hsl(var(--danger-foreground));
+  --color-info: hsl(var(--info));
+  --color-ring: hsl(var(--ring));
+  --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+::selection {
+  background: hsl(var(--accent) / 0.2);
+  color: hsl(var(--foreground));
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-sans);
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+.ui-focus-ring {
+  outline: none;
+}
+
+.ui-focus-ring:focus-visible {
+  outline: var(--component-focus-width) solid hsl(var(--ring));
+  outline-offset: var(--component-focus-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Scrollbar Customizada Premium */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border) / 0.8);
+  border-radius: 9999px;
+  border: 3px solid hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }

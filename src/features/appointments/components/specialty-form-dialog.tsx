@@ -3,6 +3,7 @@
 import React, { useEffect, useActionState } from "react";
 import { X, Save, Clock, Layers, FileText, Tag, Smile } from "lucide-react";
 import { upsertSpecialtyAction } from "../cms-actions";
+import { Button } from "@/components/ui/button";
 
 interface SpecialtyItem {
   id: string;
@@ -51,12 +52,14 @@ export function SpecialtyFormDialog({ isOpen, onClose, specialty }: SpecialtyFor
             <Smile className="h-5 w-5 text-secondary animate-pulse" />
             {specialty ? "Editar Especialidade" : "Nova Especialidade"}
           </h3>
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Formulário com Server Action */}
@@ -156,22 +159,21 @@ export function SpecialtyFormDialog({ isOpen, onClose, specialty }: SpecialtyFor
 
           {/* Rodapé e Ações */}
           <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
-            <button
-              type="button"
+            <Button
+              variant="outline"
               onClick={onClose}
               disabled={isPending}
-              className="px-5 py-2.5 rounded-xl border border-border hover:bg-muted text-sm font-bold text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-50"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
               disabled={isPending}
-              className="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-sm font-extrabold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
             >
               <Save className="h-4 w-4" />
               {isPending ? "Salvando..." : "Salvar"}
-            </button>
+            </Button>
           </div>
 
         </form>

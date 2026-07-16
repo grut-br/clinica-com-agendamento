@@ -28,6 +28,8 @@ export async function getDashboardMetricsAction(): Promise<DashboardMetrics> {
 
   const totalAppointments = appointmentsCount || 0;
 
+
+
   return {
     totalAppointments,
     cancellationRate: 0,

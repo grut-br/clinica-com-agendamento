@@ -1,10 +1,9 @@
 import React from "react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { getAllProfiles, getAllProfessionals, getUserProfile } from "@/features/appointments/queries";
 import { UsersManager } from "@/features/appointments/components/users-manager";
 import { ShieldAlert } from "lucide-react";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Gerenciamento de Usuários | Med Odonto",
@@ -43,6 +42,7 @@ export default async function UsuariosDashboardPage() {
       
       {/* Cabeçalho do Módulo de Usuários */}
       <PageHeader 
+        eyebrow="Administração"
         title="Controle de Usuários & Acessos"
         description="Gerencie permissões RBAC, eleve recepcionistas a administradores ou crie contas de acesso internas."
       />
