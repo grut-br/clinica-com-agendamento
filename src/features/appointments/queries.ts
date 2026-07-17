@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
+
 export interface AppointmentWithRelations {
   id: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
@@ -175,7 +176,6 @@ export async function fetchAvailableSlots(
       console.error("[FETCH_SLOTS_QUERY_ERROR]:", slotsError);
     }
 
-    // Se houver slots físicos configurados no banco, mapeia e retorna
     if (slotsData && slotsData.length > 0) {
       return slotsData.map((slot) => {
         // Formatar start_time de "14:00:00" para "14:00"
@@ -188,63 +188,13 @@ export async function fetchAvailableSlots(
       });
     }
 
-    // 3. Fallback / Mock Virtual do MVP: 
-    // Se a clínica ainda não gerou slots físicos na agenda para o dia, criamos uma grade comercial virtual.
-    const defaultTimes = [
-      "08:00", "09:00", "10:00", "11:00", 
-      "14:00", "15:00", "16:00", "17:00"
-    ];
-
-    // Cruzamos os horários virtuais com os agendamentos existentes para invalidar horários já ocupados
-    const { data: appointmentsData } = await supabase
-      .from("appointments")
-      .select(`
-        id,
-        appointment_slots!inner (
-          start_time,
-          date
-        )
-      `)
-      .eq("appointment_slots.date", date)
-      .eq("specialty_id", specialtyId);
-
-    interface RawAppointmentSlot {
-      id: string;
-      appointment_slots: { start_time: string; date: string } | { start_time: string; date: string }[] | null;
-    }
-
-    const occupiedTimes = new Set<string>();
-    if (appointmentsData) {
-      appointmentsData.forEach((app: RawAppointmentSlot) => {
-        const slotObj = Array.isArray(app.appointment_slots) 
-          ? app.appointment_slots[0] 
-          : app.appointment_slots;
-
-        if (slotObj?.start_time) {
-          const time = slotObj.start_time.substring(0, 5);
-          occupiedTimes.add(time);
-        }
-      });
-    }
-
-    return defaultTimes.map((time) => {
-      const isOccupied = occupiedTimes.has(time);
-      return {
-        id: `${date} - ${time}`, // ID virtual estruturado
-        time,
-        isAvailable: !isOccupied,
-      };
-    });
-
+    return [];
   } catch (error) {
     console.error("[FETCH_SLOTS_CRITICAL_ERROR]:", error);
     return [];
   }
 }
 
-/**
- * Consulta exames ativos do laboratório Ultralab.
- */
 export async function getActiveExams() {
   try {
     const supabase = await createClient();
@@ -779,5 +729,29 @@ export async function fetchDashboardCalendarSlots(professionalId: string) {
   } catch (error) {
     console.error("[FETCH_DASHBOARD_CALENDAR_SLOTS_CRITICAL_ERROR]:", error);
     return [];
+  }
+}
+
+/**
+ * Consulta detalhes de um exame baseado no slug (case-insensitive) para a página pública.
+ */
+export async function getExamBySlug(slug: string) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("exams")
+      .select("name, description, requires_scheduling, price")
+      .ilike("slug", slug)
+      .single();
+
+    if (error) {
+      console.error("[GET_EXAM_BY_SLUG_ERROR]:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("[GET_EXAM_BY_SLUG_CRITICAL_ERROR]:", error);
+    return null;
   }
 }

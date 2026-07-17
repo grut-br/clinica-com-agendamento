@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAllSpecialties, getAllExams } from "@/features/appointments/queries";
 import { CatalogoTabs } from "@/features/appointments/components/catalogo-tabs";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = {
   title: "Catálogo da Clínica | Med Odonto",

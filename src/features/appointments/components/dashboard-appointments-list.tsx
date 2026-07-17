@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { AppointmentWithRelations } from "../queries";
 import { updateAppointmentStatusAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
 interface DashboardAppointmentsListProps {
   initialAppointments: AppointmentWithRelations[];
@@ -244,20 +245,24 @@ export function DashboardAppointmentsList({ initialAppointments }: DashboardAppo
                           {/* Ações de Confirmar/Cancelar para agendamentos pendentes */}
                           {appointment.status === "pending" && (
                             <div className="flex items-center gap-1.5 border-l border-slate-100 pl-2.5">
-                              <button
+                              <Button
                                 onClick={() => handleStatusUpdate(appointment.id, "confirmed")}
-                                className="inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-sm shadow-emerald-500/10 cursor-pointer active:scale-90"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8.5 w-8.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white shrink-0"
                                 title="Confirmar Consulta"
                               >
                                 <Check className="h-4 w-4" />
-                              </button>
-                              <button
+                              </Button>
+                              <Button
                                 onClick={() => handleStatusUpdate(appointment.id, "cancelled")}
-                                className="inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-rose-500 hover:bg-rose-600 text-white transition-all shadow-sm shadow-rose-500/10 cursor-pointer active:scale-90"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8.5 w-8.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shrink-0"
                                 title="Cancelar Consulta"
                               >
                                 <X className="h-4 w-4" />
-                              </button>
+                              </Button>
                             </div>
                           )}
 

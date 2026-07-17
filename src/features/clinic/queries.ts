@@ -15,6 +15,8 @@ export interface ClinicSettings {
  * Retorna null se não houver configurações cadastradas.
  */
 export async function getClinicSettings(): Promise<ClinicSettings | null> {
+
+
   try {
     const supabase = await createClient();
 

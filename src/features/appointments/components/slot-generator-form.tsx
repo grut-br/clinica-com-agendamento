@@ -4,6 +4,7 @@ import React, { useActionState, useState, useMemo } from "react";
 import { generateScheduleSlotsAction } from "../actions";
 import { ActionState } from "@/lib/action-state";
 import { Calendar, Clock, Sparkles, AlertCircle, CheckCircle2, Stethoscope, Trash2, PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SpecialtyItem {
   id: string;
@@ -264,36 +265,38 @@ export function SlotGeneratorForm({ specialties, professionals }: SlotGeneratorF
 
               {/* Botão Remover */}
               {intervals.length > 1 && (
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
+                  size="icon"
                   disabled={isPending}
                   onClick={() => setIntervals(intervals.filter(i => i.id !== interval.id))}
-                  className="h-[42px] px-3 rounded-xl border border-red-200/50 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors flex items-center justify-center disabled:opacity-50 cursor-pointer"
+                  className="h-11 w-11 rounded-xl shrink-0"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               )}
             </div>
           ))}
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
             disabled={isPending}
             onClick={() => setIntervals([...intervals, { id: Date.now(), startTime: "14:00", endTime: "18:00" }])}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-transparent hover:bg-muted py-2.5 px-4 text-sm font-medium text-foreground transition-all duration-300 cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto"
           >
             <PlusCircle className="h-4 w-4 text-muted-foreground" />
             Adicionar outro turno
-          </button>
+          </Button>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isPending || filteredProfessionals.length === 0}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent/90 py-4 px-6 text-base font-bold text-white transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="primary"
+          className="w-full py-4 text-base font-extrabold shadow-md hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed"
         >
           {isPending ? "Processando geração..." : "Gerar Grade de Horários"}
-        </button>
+        </Button>
 
       </form>
     </div>
